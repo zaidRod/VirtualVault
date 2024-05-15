@@ -2,23 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
+import 'package:widgets_basicos/models/carga_Datos.dart';
+import 'package:widgets_basicos/models/productsModel.dart';
 import 'package:widgets_basicos/screens/productScreen.dart';
 
 import '../view_models/modelo_usuario.dart';
 
 class ProductWidget extends StatefulWidget {
-  final String nombre;
-  final int precio;
-  final String desc;
-  final String image;
+  final Product producto;
 
   ProductWidget({
     super.key,
-    required this.nombre,
-    required this.precio,
-    required this.desc,
-    required this.image,
+    required this.producto,
   });
 
   @override
@@ -27,12 +24,15 @@ class ProductWidget extends StatefulWidget {
 
 class _ProductWidgetState extends State<ProductWidget> {
   @override
+  //Controlador de la base de datos.
+  final dao = ProductoDao();
+
   Widget build(BuildContext context) {
     return Consumer<ModeloUsuario>(
       builder: (context, ModeloUsuario, child) {
         final bool esAdmin = ModeloUsuario.esAdmin;
         final bool esFavorito =
-            ModeloUsuario.existFavorite(widget.nombre) != -1;
+            ModeloUsuario.existFavorite(widget.producto.name) != -1;
 
         return Center(
           child: Container(
@@ -47,7 +47,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                     child: InkWell(
                       onTap: () {
                         int indexFav =
-                            ModeloUsuario.existFavorite(widget.nombre);
+                            ModeloUsuario.existFavorite(widget.producto.name);
 
                         //Si existe el favorito lo borra
 
@@ -56,8 +56,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                         } else {
                           //Lo agrega
                           ModeloUsuario.addFavorite(
-                            Favorito(
-                                widget.nombre, widget.image, widget.precio),
+                            Favorito(widget.producto.name,
+                                widget.producto.image, widget.producto.price),
                           );
                         }
                       },
@@ -81,13 +81,16 @@ class _ProductWidgetState extends State<ProductWidget> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProductScreen(widget.image,
-                                  widget.nombre, widget.precio, widget.desc),
+                              builder: (context) => ProductScreen(
+                                  widget.producto.image,
+                                  widget.producto.name,
+                                  widget.producto.price,
+                                  widget.producto.desc),
                             ),
                           );
                         },
                         child: Image.asset(
-                          "assets/images/Carrusel2.jpg",
+                          widget.producto.image,
                           fit: BoxFit.contain,
                           width: 111,
                           height: 111,
@@ -95,12 +98,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        widget.nombre,
+                        widget.producto.name,
                         style: GoogleFonts.playfairDisplay(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "${widget.precio.toStringAsFixed(2)} €",
+                        "${widget.producto.price.toStringAsFixed(2)} €",
                         style: GoogleFonts.playfairDisplay(fontSize: 16),
                       ),
                       //Fila de los botones de edicion y borrado
@@ -110,11 +113,16 @@ class _ProductWidgetState extends State<ProductWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton(
+                              //Boton de edicion
                               onPressed: () {},
                               child: Icon(Icons.border_color_outlined),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              //Boton de borrado
+                              onPressed: () async {
+                                dao.deleteProduct(widget.producto.id);
+                                ModeloUsuario.actualizarGrid();
+                              },
                               child: Icon(Icons.delete_outline),
                             )
                           ],

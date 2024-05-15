@@ -29,6 +29,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context, ModeloUsuario, child) {
         //Verifico si el usuario es administrador y dependiendo retorno el homepage
         final esAdmin = ModeloUsuario.esAdmin;
+        final sesionInciada = ModeloUsuario.incioSesion;
+
         return esAdmin
             ? const AdminScaffold()
             : Scaffold(
@@ -37,23 +39,33 @@ class _HomePageState extends State<HomePage> {
                   toolbarHeight: 70,
                   elevation: 0,
                   actions: [
-                    //Icono que manda al logIn
-                    Container(
-                      margin: const EdgeInsets.only(right: 12),
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black,
-                      ),
-                      child: Builder(
-                        builder: (context) => InkWell(
-                          child: const Icon(Icons.person),
-                          // Boton de login
-                          onTap: () => _showLoginForm(context),
-                        ),
-                      ),
-                    )
+                    //Dependiendo si se ha iniciado sesion se muestra un boton u otro.
+                    sesionInciada
+                        ? ElevatedButton(
+                            onPressed: () {
+                              ModeloUsuario.modificarBotonInicio(false);
+                              ModeloUsuario.cambiarNombre("");
+                              ModeloUsuario.loginAdmin(false);
+                            },
+                            child: const Icon(Icons.exit_to_app))
+                        :
+                        //Icono que manda al logIn
+                        Container(
+                            margin: const EdgeInsets.only(right: 12),
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black,
+                            ),
+                            child: Builder(
+                              builder: (context) => InkWell(
+                                child: const Icon(Icons.person),
+                                // Boton de login
+                                onTap: () => _showLoginForm(context),
+                              ),
+                            ),
+                          )
                   ],
                   backgroundColor: Colors.black,
                   title: Text(

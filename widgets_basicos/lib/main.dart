@@ -6,9 +6,13 @@ import 'baseDeDatos/database_helper.dart';
 import 'view_models/modelo_usuario.dart';
 
 void main() async {
-  // Incia la base de datos
+  //Llamada de la base de datos y la carga de productos
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper.instance.init();
+  await cargarDatos();
+
+  // Incia la base de datos
+
   runApp(
     //Implemento el notificador de estado
     ChangeNotifierProvider(
@@ -16,7 +20,6 @@ void main() async {
       child: const MyApp(),
     ),
   );
-  CargarDatos();
 }
 
 class MyApp extends StatefulWidget {

@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
+import 'package:widgets_basicos/models/carga_Datos.dart';
 
 class ModeloUsuario extends ChangeNotifier {
   //Listado de favoritos
   List<Favorito> favorites = <Favorito>[];
+
+  //Verifica si se ha iniciado sesion
+  bool incioSesion = false;
+
+  void modificarBotonInicio(bool valor) {
+    incioSesion = valor;
+    notifyListeners();
+  }
+
+  Future<void> actualizarGrid() async {
+    listadoProductos = [];
+    await cargarDatos();
+    notifyListeners();
+  }
 
   //Cantidad de favoritos
   int get numFavorites => favorites.length;
@@ -47,6 +62,10 @@ class ModeloUsuario extends ChangeNotifier {
 
   void loginAdmin(bool esAdminis) {
     esAdmin = esAdminis;
+    notifyListeners();
+  }
+
+  void upadteScreen() {
     notifyListeners();
   }
 }

@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:provider/provider.dart";
 import "package:widgets_basicos/forms/addForm.dart";
 import "package:widgets_basicos/screens/homeScreenGrid.dart";
 import "package:widgets_basicos/screens/temporal_loginScreen.dart";
+import "package:widgets_basicos/view_models/modelo_usuario.dart";
 
 //Scaffol del administrador
 class AdminScaffold extends StatefulWidget {
@@ -29,58 +31,53 @@ class _AdminScaffoldState extends State<AdminScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //AppBar
-      appBar: AppBar(
-        toolbarHeight: 70,
-        elevation: 0,
-        actions: [
-          //Icono que manda al logIn
-          Container(
-            margin: const EdgeInsets.only(right: 12),
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.black,
+    return Consumer<ModeloUsuario>(
+      builder: (context, ModeloUsuario, child) {
+        return Scaffold(
+          //AppBar
+          appBar: AppBar(
+            toolbarHeight: 70,
+            elevation: 0,
+            actions: [
+              //Icono que manda al logIn
+              ElevatedButton(
+                  //Controlo que al iniciar la sesion de admin se cambie el boton de salida de sesion.
+                  onPressed: () {
+                    ModeloUsuario.loginAdmin(false);
+                    ModeloUsuario.modificarBotonInicio(false);
+                    ModeloUsuario.cambiarNombre("");
+                  },
+                  child: const Icon(Icons.exit_to_app))
+            ],
+            backgroundColor: Colors.black,
+            title: Text(
+              //nombre del usuario a modificar
+              "Buenas Don administrador",
+              style: GoogleFonts.playfairDisplay(
+                  fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            child: Builder(
-              builder: (context) => InkWell(
-                child: const Icon(Icons.person),
-                onTap: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
-            ),
-          )
-        ],
-        backgroundColor: Colors.black,
-        title: Text(
-          //nombre del usuario a modificar
-          "Hola administrador",
-          style: GoogleFonts.playfairDisplay(
-              fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        foregroundColor: Colors.white,
-      ),
-      body: const HomeScreenGrid(),
+            foregroundColor: Colors.white,
+          ),
+          body: const HomeScreenGrid(),
 
-      //Ventana lateral del login page
-      endDrawer: const Drawer(
-        child: LoginPage(),
-      ),
-      //Boton para agregar nuevos productos
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //Llamada a la funcion del alertDialog
-          nuevoArticulo(context);
-        },
-        backgroundColor: Colors.lightGreen,
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.add,
-        ),
-      ),
+          //Ventana lateral del login page
+          endDrawer: const Drawer(
+            child: LoginPage(),
+          ),
+          //Boton para agregar nuevos productos
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              //Llamada a la funcion del alertDialog
+              nuevoArticulo(context);
+            },
+            backgroundColor: Colors.lightGreen,
+            shape: const CircleBorder(),
+            child: const Icon(
+              Icons.add,
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -50,15 +50,18 @@ class _LoginPageState extends State<LoginPage> {
                     icon: Icons.lock,
                     isPassword: true,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
+                    //Modificaion del incio de sesion.
                     onPressed: () {
-/* 
-if (textControlerUsuario.text == "admin") {
-                  ModeloUsuario.loginAdmin(true);
-                }
-                //Cambio el valor de la variable para mostrar un home
-                ModeloUsuario.cambiarNombre(textControlerUsuario.text); */
+                      if (textControlerUsuario.text == "admin") {
+                        modeloUsuario.loginAdmin(true);
+                      }
+                      //Cambio el valor de la variable para mostrar un home
+                      modeloUsuario.cambiarNombre(textControlerUsuario.text);
+                      modeloUsuario.modificarBotonInicio(true);
+
+                      Navigator.pop(context);
                     },
                     child: const Text('Iniciar sesión'),
                   ),
