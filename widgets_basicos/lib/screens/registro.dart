@@ -12,9 +12,9 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final textControllerUsuario = TextEditingController();
   final textControllerPass = TextEditingController();
-  final textControllerBirthDate = TextEditingController();
   final textControllerEmail = TextEditingController();
   final textControllerMobile = TextEditingController();
+  final textControllerBirthDate = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +31,9 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           body: SingleChildScrollView(
-            // Asegura que el teclado no cubra los campos de texto
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(
-                    20), // Espacio uniforme alrededor del contenido
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -65,12 +63,34 @@ class _RegisterPageState extends State<RegisterPage> {
                       label: 'Teléfono Móvil',
                       icon: Icons.phone,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        // Implementar funcionalidad de registro
+                      onPressed: () async {
+                        bool registrado = await modeloUsuario.registrarUsuario(
+                          textControllerUsuario.text,
+                          textControllerPass.text,
+                          textControllerEmail.text,
+                          textControllerMobile.text,
+                          textControllerBirthDate.text,
+                        );
+                        if (registrado) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('¡Registro completado!'),
+                            ),
+                          );
+                          Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.pop(context);
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Cuenta ya existente'),
+                            ),
+                          );
+                        }
                       },
-                      child: Text('Registrarse'),
+                      child: const Text('Registrarse'),
                     ),
                   ],
                 ),

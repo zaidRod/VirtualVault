@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/screens/registro.dart';
-
 import '../view_models/modelo_usuario.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,14 +11,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Guardan el contenido del textField
   final textControlerUsuario = TextEditingController();
   final textControlerPass = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    //Es importante que los demas widgets tengan el mismo consumer y contexto para poder
-    //usar los datos del modelo.
     return Consumer<ModeloUsuario>(
       builder: (context, modeloUsuario, child) {
         return Scaffold(
@@ -52,16 +48,33 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    //Modificaion del incio de sesion.
-                    onPressed: () {
+                    onPressed: () async {
                       if (textControlerUsuario.text == "admin") {
                         modeloUsuario.loginAdmin(true);
                       }
-                      //Cambio el valor de la variable para mostrar un home
-                      modeloUsuario.cambiarNombre(textControlerUsuario.text);
-                      modeloUsuario.modificarBotonInicio(true);
 
-                      Navigator.pop(context);
+                      bool success = await modeloUsuario.iniciarSesion(
+                        textControlerUsuario.text,
+                        textControlerPass.text,
+                      );
+                      if (success) {
+                        Navigator.pop(context);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Error'),
+                            content:
+                                const Text('Usuario o contraseña incorrectos'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                     child: const Text('Iniciar sesión'),
                   ),

@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
+import 'package:widgets_basicos/forms/updateForm.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
-import 'package:widgets_basicos/models/carga_Datos.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
 import 'package:widgets_basicos/screens/productScreen.dart';
 
@@ -23,11 +25,24 @@ class ProductWidget extends StatefulWidget {
 }
 
 class _ProductWidgetState extends State<ProductWidget> {
-  @override
   //Controlador de la base de datos.
   final dao = ProductoDao();
 
   Widget build(BuildContext context) {
+    //Funcion que llama al nuevo articulo
+    updateArticulo(context) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              //LLamada al formulario
+              content: UpdateForm(
+                producto: widget.producto,
+              ),
+            );
+          });
+    }
+
     return Consumer<ModeloUsuario>(
       builder: (context, ModeloUsuario, child) {
         final bool esAdmin = ModeloUsuario.esAdmin;
@@ -45,19 +60,20 @@ class _ProductWidgetState extends State<ProductWidget> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 6, right: 9),
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
                         int indexFav =
                             ModeloUsuario.existFavorite(widget.producto.name);
-
-                        //Si existe el favorito lo borra
 
                         if (indexFav != -1) {
                           ModeloUsuario.deleteFavorite(indexFav);
                         } else {
-                          //Lo agrega
                           ModeloUsuario.addFavorite(
-                            Favorito(widget.producto.name,
-                                widget.producto.image, widget.producto.price),
+                            Favorito(
+                              id: 0, // Autoincremental en la BD
+                              imagen: widget.producto.image,
+                              nombre: widget.producto.name,
+                              precio: widget.producto.price,
+                            ),
                           );
                         }
                       },
@@ -89,8 +105,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                             ),
                           );
                         },
-                        child: Image.asset(
-                          widget.producto.image,
+                        child: Image.file(
+                          File(widget.producto.image),
                           fit: BoxFit.contain,
                           width: 111,
                           height: 111,
@@ -114,13 +130,15 @@ class _ProductWidgetState extends State<ProductWidget> {
                           children: [
                             ElevatedButton(
                               //Boton de edicion
-                              onPressed: () {},
+                              onPressed: () {
+                                updateArticulo(context);
+                              },
                               child: Icon(Icons.border_color_outlined),
                             ),
                             ElevatedButton(
                               //Boton de borrado
                               onPressed: () async {
-                                dao.deleteProduct(widget.producto.id);
+                                await dao.deleteProduct(widget.producto.id);
                                 ModeloUsuario.actualizarGrid();
                               },
                               child: Icon(Icons.delete_outline),

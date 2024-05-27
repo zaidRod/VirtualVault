@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
@@ -8,14 +7,19 @@ import 'package:widgets_basicos/models/productsModel.dart';
 class ProductoDao {
   final database = DatabaseHelper.instance.db;
 
-  Future<List<ProductoModel>> readAll() async {
-    final data = await database.query('carrito');
+  Future<List<ProductoModel>> readAll(int userId) async {
+    final data = await database
+        .query('carrito', where: 'userId = ?', whereArgs: [userId]);
     return data.map((e) => ProductoModel.fromMap(e)).toList();
   }
 
-  Future<int> Insert(ProductoModel producto) async {
-    return await database.insert(
-        'carrito', {'name': producto.name, 'cantidad': producto.cantidad});
+  Future<int> insert(ProductoModel producto, int userId) async {
+    return await database.insert('carrito', {
+      'userId': userId,
+      'name': producto.name,
+      'cantidad': producto.cantidad,
+      'price': producto.price
+    });
   }
 
   Future<void> updateCantidad(int id, int nuevaCantidad) async {
@@ -30,13 +34,14 @@ class ProductoDao {
     );
   }
 
-  Future<void> update(ProductoModel producto) async {
+  Future<void> update(ProductoModel producto, int userId) async {
     await database.update('carrito', producto.toMap(),
-        where: 'id = ?', whereArgs: [producto.id]);
+        where: 'id = ? AND userId = ?', whereArgs: [producto.id, userId]);
   }
 
-  Future<void> delete(ProductoModel producto) async {
-    await database.delete('carrito', where: 'id = ?', whereArgs: [producto.id]);
+  Future<void> delete(ProductoModel producto, int userId) async {
+    await database.delete('carrito',
+        where: 'id = ? AND userId = ?', whereArgs: [producto.id, userId]);
   }
 
   //*************************Tabla productos*************************//
@@ -87,7 +92,6 @@ class ProductoDao {
     );
   }
 
-//Metodo qque verifica si hay productos en la tabla
   Future<bool> isProductEmpty() async {
     List<Map<String, dynamic>> products =
         await database.query('productos', limit: 1);

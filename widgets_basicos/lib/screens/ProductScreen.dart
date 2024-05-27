@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
@@ -35,7 +37,7 @@ class ProductScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromARGB(255, 244, 224, 224),
                       image: DecorationImage(
-                          image: AssetImage(image), fit: BoxFit.cover),
+                          image: FileImage(File(image)), fit: BoxFit.cover),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
@@ -72,7 +74,11 @@ class ProductScreen extends StatelessWidget {
                               } else {
                                 //Lo agrega
                                 ModeloUsuario.addFavorite(
-                                  Favorito(nombre, image, precio),
+                                  Favorito(
+                                      id: 0,
+                                      nombre: nombre,
+                                      imagen: image,
+                                      precio: precio),
                                 );
                               }
                             },
@@ -148,13 +154,27 @@ class ProductScreen extends StatelessWidget {
                           children: [
                             InkWell(
                               onTap: () async {
-                                final name = nombre;
-                                ProductoModel producto =
-                                    ProductoModel(name: name);
-                                final id = await dao.Insert(producto);
-                                producto = producto.copyWith(id: id);
-
-                                //agregarCarrito(producto);
+                                if (ModeloUsuario.inicioSesion) {
+                                  final name = nombre;
+                                  ProductoModel producto =
+                                      ProductoModel(name: name, price: precio);
+                                  final id = await dao.insert(producto,
+                                      ModeloUsuario.usuarioActual!.id);
+                                  producto = producto.copyWith(id: id);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'producto añadido al carrito correctamente'),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Por favor, inicie sesión para agregar al carrito.'),
+                                    ),
+                                  );
+                                }
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(18),
@@ -170,7 +190,16 @@ class ProductScreen extends StatelessWidget {
                             ),
                             InkWell(
                               //Boton comprara ahora
-                              onTap: () {},
+                              onTap: () {
+                                if (!ModeloUsuario.inicioSesion) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Por favor, inicie sesión para comprar.'),
+                                    ),
+                                  );
+                                }
+                              },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 18, horizontal: 70),

@@ -5,6 +5,7 @@ import 'package:widgets_basicos/screens/adminScreen.dart';
 import 'package:widgets_basicos/screens/carritoScreen.dart';
 import 'package:widgets_basicos/screens/favoritesScreen.dart';
 import 'package:widgets_basicos/screens/homeScreenGrid.dart';
+import 'package:widgets_basicos/screens/settingsScreen.dart';
 import 'package:widgets_basicos/screens/temporal_loginScreen.dart';
 
 import '../view_models/modelo_usuario.dart';
@@ -26,10 +27,10 @@ class _HomePageState extends State<HomePage> {
     //Importante para que se compartan los cambios entre los widgets la linea del consumer y
     //builder deben ser exactas.
     return Consumer<ModeloUsuario>(
-      builder: (context, ModeloUsuario, child) {
+      builder: (context, modeloUsuario, child) {
         //Verifico si el usuario es administrador y dependiendo retorno el homepage
-        final esAdmin = ModeloUsuario.esAdmin;
-        final sesionInciada = ModeloUsuario.incioSesion;
+        final esAdmin = modeloUsuario.esAdmin;
+        final sesionInciada = modeloUsuario.inicioSesion;
 
         return esAdmin
             ? const AdminScaffold()
@@ -41,13 +42,15 @@ class _HomePageState extends State<HomePage> {
                   actions: [
                     //Dependiendo si se ha iniciado sesion se muestra un boton u otro.
                     sesionInciada
-                        ? ElevatedButton(
-                            onPressed: () {
-                              ModeloUsuario.modificarBotonInicio(false);
-                              ModeloUsuario.cambiarNombre("");
-                              ModeloUsuario.loginAdmin(false);
-                            },
-                            child: const Icon(Icons.exit_to_app))
+                        //Si se inicia sesesion se muestra estre drawer con las opciones
+                        ? Builder(
+                            builder: (context) => InkWell(
+                              child: const Icon(Icons.settings),
+                              onTap: () {
+                                Scaffold.of(context).openEndDrawer();
+                              },
+                            ),
+                          )
                         :
                         //Icono que manda al logIn
                         Container(
@@ -70,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                   backgroundColor: Colors.black,
                   title: Text(
                     //nombre del usuario a modificar
-                    saludo + ModeloUsuario.nombre,
+                    saludo + (modeloUsuario.usuarioActual?.username ?? ''),
                     style: GoogleFonts.playfairDisplay(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -108,8 +111,11 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 //Ventana lateral del login page
-                endDrawer: const Drawer(
-                  child: LoginPage(),
+                endDrawer: Drawer(
+                  child: Container(
+                    width: 100.0,
+                    child: const settingScreen(),
+                  ),
                 ),
               );
       },

@@ -1,69 +1,102 @@
-import "package:flutter/material.dart";
-import "package:provider/provider.dart";
-import "package:widgets_basicos/view_models/modelo_usuario.dart";
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:widgets_basicos/view_models/modelo_usuario.dart';
 
 class ListadoFavoritos extends StatelessWidget {
-  const ListadoFavoritos({super.key});
+  const ListadoFavoritos({Key? key});
+
+  get nombre => null;
+
+  get precio => null;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ModeloUsuario>(
-      builder: (context, ModeloUsuario, child) {
-        if (ModeloUsuario.numFavorites == 0) {
-          return const Center(
-            child: Text(
-              "No tienes ningun favorito.",
-              style: TextStyle(fontSize: 18),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Favoritos',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+          ),
+        ),
+        backgroundColor: Colors.teal,
+        elevation: 0,
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Colors.green],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          );
-        }
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+      ),
+      body: Consumer<ModeloUsuario>(
+        builder: (context, modeloUsuario, child) {
+          if (modeloUsuario.numFavorites == 0) {
+            return const Center(
+              child: Text(
+                "No tienes ningun favorito.",
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
 
-        return Container(
-          decoration: BoxDecoration(
-              color: Colors.lightGreen,
-              borderRadius: BorderRadius.circular(20)),
-          child: ListView.separated(
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 15,
-              );
-            },
-            itemCount: ModeloUsuario.numFavorites,
+          return ListView.builder(
+            padding: const EdgeInsets.all(8.0),
+            itemCount: modeloUsuario.numFavorites,
             itemBuilder: (context, index) {
-              return Dismissible(
-                onDismissed: (direction) {
-                  ModeloUsuario.deleteFavorite(index);
-                },
-                key: UniqueKey(),
-                child: Container(
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
+              final favorito = modeloUsuario.favorites[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  leading: const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                    size: 30.0,
+                  ),
+                  title: Text(
+                    favorito.nombre,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
                     ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(ModeloUsuario.favorites[index].nombre),
-                        Text(
-                          ModeloUsuario.favorites[index].precio.toString() +
-                              ".00 €",
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            ModeloUsuario.deleteFavorite(index);
-                          },
-                          child: const Icon(Icons.delete, color: Colors.black),
-                        )
-                      ],
+                  ),
+                  subtitle: Text(
+                    '${favorito.precio.toStringAsFixed(2)} €',
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey,
                     ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          modeloUsuario.deleteFavorite(index);
+                        },
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.shopping_cart),
+                          onPressed: () async {}),
+                    ],
                   ),
                 ),
               );
             },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

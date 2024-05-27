@@ -33,25 +33,44 @@ class _HomeScreenGridState extends State<HomeScreenGrid> {
           child: Column(
             children: [
               const MiCarrusel(),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  //Selecciona la cantidad de productos que mostrara el grid
-                  itemCount: listadoProductos.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 13,
-                    crossAxisSpacing: 13,
-                    //Extiende el largo de los elementos del grid dependiendo si es admin o no
-                    mainAxisExtent: esAdmin ? 250 : 200,
-                  ),
-                  itemBuilder: (context, index) {
-                    return listadoProductos[index];
-                  },
-                ),
-              )
+              listadoProductos.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 150,
+                            ),
+                            Text(
+                              "No tienes productos 👀, ¡Agrega algunos! 😊 ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        //Selecciona la cantidad de productos que mostrara el grid
+                        itemCount: listadoProductos.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 13,
+                          crossAxisSpacing: 13,
+                          //Extiende el largo de los elementos del grid dependiendo si es admin o no
+                          mainAxisExtent: esAdmin ? 250 : 200,
+                        ),
+                        itemBuilder: (context, index) {
+                          return listadoProductos[index];
+                        },
+                      ),
+                    )
             ],
           ),
         );

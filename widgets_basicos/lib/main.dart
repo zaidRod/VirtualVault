@@ -6,15 +6,21 @@ import 'baseDeDatos/database_helper.dart';
 import 'view_models/modelo_usuario.dart';
 
 void main() async {
-  //Llamada de la base de datos y la carga de productos
+  // Asegura la inicialización de widgets
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Elimina la base de datos existente (solo para desarrollo)
+  //await DatabaseHelper.instance.deleteDatabase();
+
+  // Inicializa la base de datos
   await DatabaseHelper.instance.init();
+
+  // Carga los datos iniciales (si es necesario)
   await cargarDatos();
 
-  // Incia la base de datos
-
+  // Inicia la aplicación
   runApp(
-    //Implemento el notificador de estado
+    // Implementa el notificador de estado
     ChangeNotifierProvider(
       create: (context) => ModeloUsuario(),
       child: const MyApp(),
@@ -34,12 +40,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //Temas de la aplicacion, texto, colores etc
+      // Temas de la aplicación, texto, colores etc
       theme: ThemeData(
-        //Texto de la app
+        // Texto de la app
         fontFamily: 'Georgia',
       ),
-      //La propiedad home es el inicio de la app, desde alli ya se manejan los demas widget que la componen
+      // La propiedad home es el inicio de la app, desde allí ya se manejan los demás widget que la componen
       home: HomePage(),
     );
   }
