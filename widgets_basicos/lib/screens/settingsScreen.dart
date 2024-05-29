@@ -2,6 +2,7 @@
 
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:widgets_basicos/screens/pedidosScreen.dart";
 import "package:widgets_basicos/view_models/modelo_usuario.dart";
 
 class settingScreen extends StatelessWidget {
@@ -27,9 +28,16 @@ class settingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const ListTile(
-              leading: Icon(Icons.local_shipping),
-              title: Text('Pedidos'),
+            _buildListTile(
+              icon: Icons.local_shipping,
+              title: 'Pedidos',
+              onTap: () {
+                // Navega a la pantalla ListadoPedidos
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListadoPedidos()),
+                );
+              },
             ),
             const ListTile(
               leading: Icon(Icons.favorite),
@@ -59,6 +67,18 @@ class settingScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildListTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }

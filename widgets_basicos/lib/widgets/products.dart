@@ -51,7 +51,10 @@ class _ProductWidgetState extends State<ProductWidget> {
 
         return Center(
           child: Container(
-            color: const Color(0xFFF1F1F1),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color(0xFFF1F1F1),
+            ),
             child: Stack(
               children: [
                 Positioned(
@@ -69,11 +72,11 @@ class _ProductWidgetState extends State<ProductWidget> {
                         } else {
                           ModeloUsuario.addFavorite(
                             Favorito(
-                              id: 0, // Autoincremental en la BD
-                              imagen: widget.producto.image,
-                              nombre: widget.producto.name,
-                              precio: widget.producto.price,
-                            ),
+                                id: 0, // Autoincremental en la BD
+                                imagen: widget.producto.image,
+                                nombre: widget.producto.name,
+                                precio: widget.producto.price,
+                                desc: widget.producto.desc),
                           );
                         }
                       },
@@ -87,7 +90,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                   ),
                 ),
                 Positioned(
-                  top: 25,
+                  top: 30,
                   right: 0,
                   left: 0,
                   child: Column(
@@ -107,20 +110,21 @@ class _ProductWidgetState extends State<ProductWidget> {
                         },
                         child: Image.file(
                           File(widget.producto.image),
-                          fit: BoxFit.contain,
-                          width: 111,
-                          height: 111,
+                          fit: BoxFit.fill,
+                          height: 160,
+                          width: 120,
                         ),
                       ),
                       SizedBox(height: 5),
                       Text(
+                        textAlign: TextAlign.center,
                         widget.producto.name,
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.montserrat(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "${widget.producto.price.toStringAsFixed(2)} €",
-                        style: GoogleFonts.playfairDisplay(fontSize: 16),
+                        style: GoogleFonts.montserrat(fontSize: 18),
                       ),
                       //Fila de los botones de edicion y borrado
                       Visibility(

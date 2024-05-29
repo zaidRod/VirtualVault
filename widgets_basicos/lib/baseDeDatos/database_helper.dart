@@ -1,5 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:widgets_basicos/models/pedido.dart';
+import 'package:widgets_basicos/models/producto_pedido.dart';
 import 'usuarioModel.dart';
 
 class DatabaseHelper {
@@ -28,6 +30,16 @@ class DatabaseHelper {
             'Create table productos (id	INTEGER PRIMARY KEY AUTOINCREMENT ,name	varchar(255), price	INTEGER DEFAULT 1,image varchar(255),desc varchar(255))');
         print("Table 'productos' created."); // Log de creación de tabla
 
+        // Tabla Pediidos
+        await db.execute(
+            'CREATE TABLE pedidos (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER,total INTEGER ,fecha TEXT, FOREIGN KEY(userId) REFERENCES usuarios(id))');
+        print("Table 'pedidos' created.");
+
+        // Tabla productos pedidos
+        await db.execute(
+            'CREATE TABLE productos_pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, pedidoId INTEGER, productoId INTEGER, cantidad INTEGER, nombre TEXT, precio INTEGER ,FOREIGN KEY(pedidoId) REFERENCES pedidos(id), FOREIGN KEY(productoId) REFERENCES productos(id))');
+        print("Table 'productos_pedidos' created.");
+
         // Tabla de carrito
         await db.execute(
           'CREATE TABLE carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, name TEXT, cantidad INTEGER DEFAULT 1,price INTEGER, FOREIGN KEY(userId) REFERENCES usuarios(id))',
@@ -42,7 +54,7 @@ class DatabaseHelper {
 
         // Tabla de favoritos
         await db.execute(
-          'CREATE TABLE favoritos (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, image TEXT, name TEXT, price INTEGER DEFAULT 1, FOREIGN KEY(userId) REFERENCES usuarios(id))',
+          'CREATE TABLE favoritos (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, image TEXT, name TEXT, description TEXT,price INTEGER DEFAULT 1, FOREIGN KEY(userId) REFERENCES usuarios(id))',
         );
         print("Table 'favoritos' created."); // Log de creación de tabla
       },
@@ -100,10 +112,15 @@ class DatabaseHelper {
 
   // Métodos para gestionar los favoritos
   Future<int> insertFavorito(
-      int userId, String image, String name, int price) async {
+      int userId, String image, String name, int price, String desc) async {
     final db = await instance.db;
-    return await db.insert('favoritos',
-        {'userId': userId, 'image': image, 'name': name, 'price': price});
+    return await db.insert('favoritos', {
+      'userId': userId,
+      'image': image,
+      'name': name,
+      'description': desc,
+      'price': price
+    });
   }
 
   Future<List<Map<String, dynamic>>> getFavoritos(int userId) async {
@@ -117,11 +134,39 @@ class DatabaseHelper {
     await db.delete('favoritos', where: 'id = ?', whereArgs: [id]);
   }
 
+//-------------------tabla pedidos--------------------------
+  Future<List<Pedido>> obtenerPedidosConDetalles() async {
+    final db = await instance.db;
+    final List<Map<String, dynamic>> pedidosResult =
+        await db.rawQuery('SELECT * FROM pedidos');
+    final List<Pedido> pedidos = [];
+    for (final pedidoMap in pedidosResult) {
+      final int pedidoId = pedidoMap['id'] as int;
+      final List<Map<String, dynamic>> productosPedidoResult =
+          await db.rawQuery(
+              'SELECT * FROM productos_pedido WHERE pedidoId = $pedidoId');
+      final List<ProductoPedido> productosPedido = productosPedidoResult
+          .map((productoPedidoMap) => ProductoPedido.fromMap(productoPedidoMap))
+          .toList();
+      final Pedido pedido = Pedido.fromMap(pedidoMap, productosPedido);
+      pedidos.add(pedido);
+    }
+    return pedidos;
+  }
+
+  Future<List<ProductoPedido>> obtenerProductosPedido(int pedidoId) async {
+    final db = await instance.db;
+    final List<Map<String, dynamic>> productosPedidoResult = await db
+        .rawQuery('SELECT * FROM productos_pedido WHERE pedidoId = $pedidoId');
+    return productosPedidoResult
+        .map((productoPedidoMap) => ProductoPedido.fromMap(productoPedidoMap))
+        .toList();
+  }
+
   // Función de eliminar la base de datos
-/* 
   Future<void> deleteDatabase() async {
     final dbPath = join(await getDatabasesPath(), 'database.db');
     await databaseFactory.deleteDatabase(dbPath);
     print("Database deleted");
-  } */
+  }
 }

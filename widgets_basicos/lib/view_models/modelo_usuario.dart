@@ -59,8 +59,8 @@ class ModeloUsuario extends ChangeNotifier {
   // Método para agregar el favorito
   void addFavorite(Favorito element) async {
     if (_usuarioActual != null && existFavorite(element.nombre) == -1) {
-      await _databaseHelper.insertFavorito(
-          _usuarioActual!.id, element.imagen, element.nombre, element.precio);
+      await _databaseHelper.insertFavorito(_usuarioActual!.id, element.imagen,
+          element.nombre, element.precio, element.desc);
       favorites.add(element);
       notifyListeners();
     }
@@ -70,6 +70,7 @@ class ModeloUsuario extends ChangeNotifier {
   void deleteFavorite(int favotiteIndex) async {
     if (_usuarioActual != null) {
       final favorito = favorites[favotiteIndex];
+
       await _databaseHelper.deleteFav(favorito.id);
       favorites.removeAt(favotiteIndex);
       notifyListeners();

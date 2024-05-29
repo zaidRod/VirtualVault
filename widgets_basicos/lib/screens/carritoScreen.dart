@@ -1,8 +1,10 @@
 // ignore: file_names
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
+import 'package:widgets_basicos/screens/pedidosScreen.dart';
 import 'package:widgets_basicos/view_models/modelo_usuario.dart';
 
 class CarritoPage extends StatefulWidget {
@@ -15,6 +17,7 @@ class CarritoPage extends StatefulWidget {
 class _CarritoPageState extends State<CarritoPage> {
   List<ProductoModel> productos = [];
   final dao = ProductoDao();
+  int totalInsert = 1;
 
   @override
   void initState() {
@@ -31,15 +34,15 @@ class _CarritoPageState extends State<CarritoPage> {
     });
   }
 
-  double calcularTotal() {
-    double total = 0.0;
+  int calcularTotal() {
+    int total = 0;
     for (var producto in productos) {
       total += producto.price * producto.cantidad;
     }
     return total;
   }
 
-  void mostrarMensajeCompra(BuildContext context, double total) {
+  void mostrarMensajeCompra(BuildContext context, int total) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -50,12 +53,12 @@ class _CarritoPageState extends State<CarritoPage> {
           title: Row(
             children: [
               const Icon(
-                Icons.check_circle,
-                color: Colors.green,
+                Icons.help_outline, // Icono de duda
+                color: Colors.orange,
                 size: 28.0,
               ),
               const SizedBox(width: 10),
-              const Text('Compra Realizada'),
+              const Text('Confirmación'),
             ],
           ),
           content: SizedBox(
@@ -119,6 +122,73 @@ class _CarritoPageState extends State<CarritoPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.grey,
+                primary: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final usuarioId =
+                    Provider.of<ModeloUsuario>(context, listen: false)
+                        .usuarioActual!
+                        .id;
+                // Insertar el nuevo pedido en la tabla Pedidos
+                final pedidoId = await dao.insertarPedido(
+                    usuarioId, DateTime.now(), totalInsert);
+
+                // Insertar los detalles del pedido en la tabla DetallesPedido
+                for (final producto in productos) {
+                  await dao.insertarDetallePedido(pedidoId, producto.id,
+                      producto.cantidad, producto.name, producto.price);
+                }
+
+                productos.clear(); // Borra todos los productos del carrito
+                dao.limpiarCarrito(
+                    Provider.of<ModeloUsuario>(context, listen: false)
+                        .usuarioActual!
+                        .id);
+                setState(() {}); // Actualiza la UI
+                Navigator.of(context).pop(); // Cierra el diálogo actual
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListadoPedidos()),
+                );
+
+                // Muestra el mensaje de confirmación de compra
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle, // Icono de verificación
+                            color: Colors.green,
+                            size: 28.0,
+                          ),
+                          SizedBox(width: 10),
+                          Text('Pedido Realizado'),
+                        ],
+                      ),
+                      content: Text('El pedido se ha realizado correctamente.'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Aceptar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.teal,
@@ -283,7 +353,8 @@ class _CarritoPageState extends State<CarritoPage> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  double total = calcularTotal();
+                  int total = calcularTotal();
+                  totalInsert = total;
                   mostrarMensajeCompra(context, total);
                 },
                 style: ElevatedButton.styleFrom(

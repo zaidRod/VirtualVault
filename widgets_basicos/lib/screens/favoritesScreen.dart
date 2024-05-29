@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:widgets_basicos/models/Favoritos.dart';
 import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/widgets/favortite.dart';
 
 class ListadoFavoritos extends StatelessWidget {
-  const ListadoFavoritos({Key? key});
-
-  get nombre => null;
-
-  get precio => null;
+  const ListadoFavoritos({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,59 +39,58 @@ class ListadoFavoritos extends StatelessWidget {
       body: Consumer<ModeloUsuario>(
         builder: (context, modeloUsuario, child) {
           if (modeloUsuario.numFavorites == 0) {
-            return const Center(
-              child: Text(
-                "No tienes ningun favorito.",
-                style: TextStyle(fontSize: 18),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.favorite_border,
+                    color: Colors.grey,
+                    size: 80,
+                  ),
+                  const Text(
+                    "No tienes ningun favorito. 😯",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Agregar Productos'),
+                  ),
+                ],
               ),
             );
           }
 
-          return ListView.builder(
+          return Padding(
             padding: const EdgeInsets.all(8.0),
-            itemCount: modeloUsuario.numFavorites,
-            itemBuilder: (context, index) {
-              final favorito = modeloUsuario.favorites[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16.0),
-                  leading: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 30.0,
+            child: GridView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: modeloUsuario.numFavorites,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 13,
+                crossAxisSpacing: 13,
+                mainAxisExtent: 310,
+              ),
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  title: Text(
-                    favorito.nombre,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+                  child: FavoriteWidget(
+                    myFavorite: Favorito(
+                      id: modeloUsuario.favorites[index].id,
+                      imagen: modeloUsuario.favorites[index].imagen,
+                      nombre: modeloUsuario.favorites[index].nombre,
+                      precio: modeloUsuario.favorites[index].precio,
+                      desc: modeloUsuario.favorites[index].desc,
                     ),
                   ),
-                  subtitle: Text(
-                    '${favorito.precio.toStringAsFixed(2)} €',
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          modeloUsuario.deleteFavorite(index);
-                        },
-                      ),
-                      IconButton(
-                          icon: const Icon(Icons.shopping_cart),
-                          onPressed: () async {}),
-                    ],
-                  ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

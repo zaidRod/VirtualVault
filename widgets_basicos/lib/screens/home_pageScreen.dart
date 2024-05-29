@@ -21,6 +21,12 @@ class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
   String saludo = "Bienvenido ";
 
+  void gotoHome() {
+    setState(() {
+      currentIndex = 0;
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
