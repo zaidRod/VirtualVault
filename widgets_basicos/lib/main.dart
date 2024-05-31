@@ -40,9 +40,10 @@ class MyApp extends StatelessWidget {
           // Temas de la aplicación, texto, colores etc
           theme: ThemeData(
             // Texto de la app
-            fontFamily: 'Georgia',
+
             // Modo oscuro o claro según el estado
-            brightness: modeloUsuario.isDarkMode ? Brightness.dark : Brightness.light,
+            brightness:
+                modeloUsuario.isDarkMode ? Brightness.dark : Brightness.light,
           ),
           // La propiedad home es el inicio de la app, desde allí ya se manejan los demás widget que la componen
           home: HomePage(),

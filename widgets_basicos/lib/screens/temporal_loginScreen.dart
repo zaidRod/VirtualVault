@@ -49,10 +49,6 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
-                      if (textControlerUsuario.text == "admin") {
-                        modeloUsuario.loginAdmin(true);
-                      }
-
                       bool success = await modeloUsuario.iniciarSesion(
                         textControlerUsuario.text,
                         textControlerPass.text,
@@ -113,8 +109,12 @@ class _LoginPageState extends State<LoginPage> {
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon),
-          fillColor: Colors.grey.shade200,
+          prefixIcon: Icon(
+            icon,
+            color: Colors.black,
+          ),
+          fillColor:
+              ModeloUsuario().isDarkMode ? Colors.white : Colors.grey.shade200,
           filled: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),

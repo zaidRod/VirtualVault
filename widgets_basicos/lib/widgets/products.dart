@@ -53,7 +53,9 @@ class _ProductWidgetState extends State<ProductWidget> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: const Color(0xFFF1F1F1),
+              color: ModeloUsuario.isDarkMode
+                  ? Colors.grey
+                  : const Color(0xFFF1F1F1),
             ),
             child: Stack(
               children: [

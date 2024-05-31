@@ -59,9 +59,12 @@ class ProductScreen extends StatelessWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.arrow_back_ios_new,
                                 size: 22,
+                                color: modeloUsuario.isDarkMode
+                                    ? Colors.black
+                                    : Colors.white,
                               ),
                             ),
                           ),
@@ -143,8 +146,11 @@ class ProductScreen extends StatelessWidget {
                         // Descripción larga
                         Text(
                           desc,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.black54),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: modeloUsuario.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black54),
                         ),
                         const SizedBox(height: 20),
                         // Botones de carrito y compra

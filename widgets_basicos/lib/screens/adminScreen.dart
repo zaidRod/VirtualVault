@@ -3,10 +3,10 @@ import "package:google_fonts/google_fonts.dart";
 import "package:provider/provider.dart";
 import "package:widgets_basicos/forms/addForm.dart";
 import "package:widgets_basicos/screens/homeScreenGrid.dart";
-import "package:widgets_basicos/screens/temporal_loginScreen.dart";
+import "package:widgets_basicos/screens/settingsScreen.dart";
 import "package:widgets_basicos/view_models/modelo_usuario.dart";
 
-//Scaffol del administrador
+//Scaffold del administrador
 class AdminScaffold extends StatefulWidget {
   const AdminScaffold({
     super.key,
@@ -17,13 +17,13 @@ class AdminScaffold extends StatefulWidget {
 }
 
 class _AdminScaffoldState extends State<AdminScaffold> {
-  //Funcion que llama al formulario para introducir nuevo articulo
+  // Función que llama al formulario para introducir nuevo artículo
   nuevoArticulo(context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return const AlertDialog(
-            //LLamada al formulario
+            // Llamada al formulario
             content: InputForm(),
           );
         });
@@ -32,28 +32,29 @@ class _AdminScaffoldState extends State<AdminScaffold> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ModeloUsuario>(
-      builder: (context, ModeloUsuario, child) {
+      builder: (context, modeloUsuario, child) {
         return Scaffold(
-          //AppBar
+          // AppBar
           appBar: AppBar(
             toolbarHeight: 70,
             elevation: 0,
             actions: [
-              //Icono que manda al logIn
+              // Icono que manda al logIn
               ElevatedButton(
-
-                  //Controlo que al iniciar la sesion de admin se cambie el boton de salida de sesion.
-                  onPressed: () {
-                    ModeloUsuario.loginAdmin(false);
-                    ModeloUsuario.modificarBotonInicio(false);
-                    ModeloUsuario.cambiarNombre("");
-                  },
-                  child: const Icon(Icons.exit_to_app))
+                // Controla que al iniciar la sesión de admin se cambie el botón de salida de sesión.
+                onPressed: () {
+                  modeloUsuario.loginAdmin(false);
+                  modeloUsuario.modificarBotonInicio(false);
+                  modeloUsuario.cambiarNombre("");
+                  modeloUsuario.cerrarSesion(); // Asegurarse de cerrar la sesión correctamente
+                },
+                child: const Icon(Icons.exit_to_app),
+              ),
             ],
             backgroundColor: Colors.black,
             title: Text(
-              //nombre del usuario a modificar
-              "Buenas Don administrador",
+              // Nombre del usuario a modificar
+              "Buenas Don Administrador",
               style: GoogleFonts.playfairDisplay(
                   fontSize: 22, fontWeight: FontWeight.bold),
             ),
@@ -61,14 +62,14 @@ class _AdminScaffoldState extends State<AdminScaffold> {
           ),
           body: const HomeScreenGrid(),
 
-          //Ventana lateral del login page
-          endDrawer: const Drawer(
-            child: LoginPage(),
+          // Ventana lateral con los ajustes
+          endDrawer: Drawer(
+            child: settingScreen(), // Utiliza el settingScreen
           ),
-          //Boton para agregar nuevos productos
+          // Botón para agregar nuevos productos
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              //Llamada a la funcion del alertDialog
+              // Llamada a la función del alertDialog
               nuevoArticulo(context);
             },
             backgroundColor: Colors.lightGreen,

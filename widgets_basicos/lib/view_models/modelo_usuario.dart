@@ -1,4 +1,3 @@
-// modelo_usuario.dart
 import 'package:flutter/material.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
 import 'package:widgets_basicos/models/carga_Datos.dart';
@@ -98,17 +97,18 @@ class ModeloUsuario extends ChangeNotifier {
 
   String _nombre = "";
 
-  bool esAdmin = false;
+  bool _esAdmin = false;
+  bool get esAdmin => _esAdmin;
+
+  void loginAdmin(bool esAdmin) {
+    _esAdmin = esAdmin;
+    notifyListeners();
+  }
 
   String get nombre => _nombre;
 
   void cambiarNombre(String nombreNuevo) {
     _nombre = nombreNuevo;
-    notifyListeners();
-  }
-
-  void loginAdmin(bool esAdminis) {
-    esAdmin = esAdminis;
     notifyListeners();
   }
 
@@ -140,6 +140,11 @@ class ModeloUsuario extends ChangeNotifier {
     final usuario = await _databaseHelper.getUsuario(username, password);
     if (usuario != null) {
       _usuarioActual = usuario;
+      if (username == 'admin' && password == 'admin') {
+        loginAdmin(true);
+      } else {
+        loginAdmin(false);
+      }
       await _loadFavorites();
       await _loadCarrito();
       notifyListeners();
@@ -151,6 +156,7 @@ class ModeloUsuario extends ChangeNotifier {
 
   void cerrarSesion() {
     _usuarioActual = null;
+    _esAdmin = false;
     favorites.clear();
     carrito.clear();
     notifyListeners();

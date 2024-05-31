@@ -68,7 +68,7 @@ class _HomeScreenGridState extends State<HomeScreenGrid> {
                           mainAxisSpacing: 13,
                           crossAxisSpacing: 13,
                           //Extiende el largo de los elementos del grid dependiendo si es admin o no
-                          mainAxisExtent: esAdmin ? 250 : 280,
+                          mainAxisExtent: esAdmin ? 320 : 280,
                         ),
                         itemBuilder: (context, index) {
                           return sortedProducts[index];
