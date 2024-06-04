@@ -191,6 +191,7 @@ class DatabaseHelper {
     final response = await http.post(
       url,
       headers: {
+        'origin': 'http://localhost',
         'Content-Type': 'application/json',
       },
       body: json.encode({
@@ -201,11 +202,11 @@ class DatabaseHelper {
           'to_name': name,
           'to_email': email,
           'user_email':
-              'kikoamarillo94@gmail.com', // Cambia esto por un correo válido si es necesario
+              'kikoamarillo94@gmail.com', // Correo de ADMIN por configurar
           'user_subject': subject,
           'user_message': message,
           'user_name':
-              'Your Company Name', // El nombre del remitente que queramos usar
+              'Virtual Vault',
         },
       }),
     );

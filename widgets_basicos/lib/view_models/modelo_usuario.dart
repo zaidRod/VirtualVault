@@ -136,7 +136,7 @@ class ModeloUsuario extends ChangeNotifier {
       await _databaseHelper.sendEmail(
         name: username,
         email: email,
-        subject: 'Confirmación de registro',
+        subject: 'Confirmación de registro: Virtual Vault',
         message:
             'Hola $username, \n\n¡Gracias por registrarte en nuestra aplicación! Tu registro fue exitoso.\n\nSaludos,\nEquipo de Soporte',
       );
