@@ -164,4 +164,30 @@ class ProductoDao {
         where: 'pedidoId = ?', whereArgs: [idPedido]);
     await database.delete('pedidos', where: 'id = ?', whereArgs: [idPedido]);
   }
+
+  //Metodo que retorna el correo
+  Future<String> mostrarNombreUsuario(int userId) async {
+    try {
+      final nombreUsuario = await database
+          .rawQuery('SELECT username FROM usuarios WHERE id = $userId');
+
+      return nombreUsuario.first['username'].toString();
+    } catch (e) {
+      print('Error al consultar la información del usuario: $e');
+      return null.toString();
+    }
+  }
+
+  //Metodo que retorna el correo
+  Future<String> mostrarCorreo(int userId) async {
+    try {
+      final correo = await database
+          .rawQuery('SELECT email FROM usuarios WHERE id = $userId');
+
+      return correo.first['email'].toString();
+    } catch (e) {
+      print('Error al consultar la información del usuario: $e');
+      return null.toString();
+    }
+  }
 }

@@ -19,13 +19,23 @@ class _LoginPageState extends State<LoginPage> {
     return Consumer<ModeloUsuario>(
       builder: (context, modeloUsuario, child) {
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            title: const Text("Iniciar sesión",
-                style: TextStyle(color: Colors.white)),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(80),
+            child: AppBar(
+              toolbarHeight: 100,
+              backgroundColor: Colors.black,
+              title: Container(
+                margin: EdgeInsets.only(top: 20),
+                child: const Text("Iniciar sesión",
+                    style: TextStyle(color: Colors.white)),
+              ),
+              leading: Container(
+                margin: EdgeInsets.only(top: 20),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
             ),
           ),
           body: Center(

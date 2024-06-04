@@ -1,7 +1,10 @@
 // ignore: file_names
 // ignore: file_names
+// ignore_for_file: empty_statements
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
 import 'package:widgets_basicos/screens/pedidosScreen.dart';
@@ -17,7 +20,10 @@ class CarritoPage extends StatefulWidget {
 class _CarritoPageState extends State<CarritoPage> {
   List<ProductoModel> productos = [];
   final dao = ProductoDao();
+  final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
   int totalInsert = 1;
+  String nombreUsuario = "";
+  String correoUsuario = "";
 
   @override
   void initState() {
@@ -124,7 +130,8 @@ class _CarritoPageState extends State<CarritoPage> {
                 Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.grey,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.grey,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -147,11 +154,53 @@ class _CarritoPageState extends State<CarritoPage> {
                       producto.cantidad, producto.name, producto.price);
                 }
 
+                //----Envio de email de confirmación del pedido ---//
+
+                correoUsuario = await dao.mostrarCorreo(usuarioId);
+                nombreUsuario = await dao.mostrarNombreUsuario(usuarioId);
+
+                String mensajeCorreo = " ";
+                productos.forEach(
+                  (element) {
+                    mensajeCorreo =
+                        "$mensajeCorreo\n✅  ${element.name}\n\t\t\tCantidad: ${element.cantidad}";
+                  },
+                );
+                await _databaseHelper.sendEmail(
+                  name: nombreUsuario,
+                  email: correoUsuario,
+                  subject: 'Confirmación de pedido: Virtual Vault',
+                  message:
+                      'Hola $nombreUsuario, \n ----------------------------------------------------------------------\n¡Gracias por realizar tu pedido en nuestra aplicación ! $mensajeCorreo \n ---------------------------------------------------------------------- \n 💶 Total del pedido: ${calcularTotal()}€  \n ---------------------------------------------------------------------- \nSaludos,\nEquipo de Soporte',
+                );
+
+                await _databaseHelper.sendEmail(
+                  name: nombreUsuario,
+                  email: "virtual.vault11@gmail.com",
+                  subject: 'Nuevo pedido realizado por $nombreUsuario',
+                  message: 'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
+                );
+
+                //-----Creación del string para whatsapp ---//
+                String whatsappMessage = "🚐 Resumen del pedido:";
+                productos.forEach(
+                  (element) {
+                    whatsappMessage =
+                        "$whatsappMessage\n✅  ${element.name}\n\t\t\tCantidad: ${element.cantidad}";
+                  },
+                );
+                whatsappMessage =
+                    "$whatsappMessage\n💶 Total del pedido: ${calcularTotal()}€";
+                // --- Envio del mensaje-------//
+                /*sendWhatsApp(
+                    phoneNumber: "34642054838", message: whatsappMessage);*/
+
                 productos.clear(); // Borra todos los productos del carrito
                 dao.limpiarCarrito(
                     Provider.of<ModeloUsuario>(context, listen: false)
                         .usuarioActual!
                         .id);
+
                 setState(() {}); // Actualiza la UI
                 Navigator.of(context).pop(); // Cierra el diálogo actual
 
@@ -190,7 +239,8 @@ class _CarritoPageState extends State<CarritoPage> {
                 );
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),

@@ -42,19 +42,25 @@ class _AdminScaffoldState extends State<AdminScaffold> {
               // Icono que manda al logIn
               ElevatedButton(
                 // Controla que al iniciar la sesión de admin se cambie el botón de salida de sesión.
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
                   modeloUsuario.loginAdmin(false);
                   modeloUsuario.modificarBotonInicio(false);
                   modeloUsuario.cambiarNombre("");
-                  modeloUsuario.cerrarSesion(); // Asegurarse de cerrar la sesión correctamente
+
+                  modeloUsuario
+                      .cerrarSesion(); // Asegurarse de cerrar la sesión correctamente
                 },
-                child: const Icon(Icons.exit_to_app),
+                child: const Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                ),
               ),
             ],
             backgroundColor: Colors.black,
             title: Text(
               // Nombre del usuario a modificar
-              "Buenas Don Administrador",
+              "Bienvenido administrador",
               style: GoogleFonts.playfairDisplay(
                   fontSize: 22, fontWeight: FontWeight.bold),
             ),

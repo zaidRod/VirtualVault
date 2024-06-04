@@ -4,6 +4,7 @@ import "dart:math";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:widgets_basicos/baseDeDatos/database_helper.dart";
 import "package:widgets_basicos/baseDeDatos/producto_dao.dart";
 import "package:widgets_basicos/baseDeDatos/producto_model.dart";
 import "package:widgets_basicos/models/Favoritos.dart";
@@ -22,6 +23,9 @@ class ProductScreen extends StatelessWidget {
 
   // Métodos de insert y de la base de datos
   final dao = ProductoDao();
+
+  //Instancia de la BD
+  final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +63,8 @@ class ProductScreen extends StatelessWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: Icon(
-                                Icons.arrow_back_ios_new,
-                                size: 22,
-                                color: modeloUsuario.isDarkMode
-                                    ? Colors.black
-                                    : Colors.white,
-                              ),
+                              child: Icon(Icons.arrow_back_ios_new,
+                                  size: 22, color: Colors.black),
                             ),
                           ),
 
@@ -168,6 +167,8 @@ class ProductScreen extends StatelessWidget {
                                   producto = producto.copyWith(id: id);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
+                                      duration: Duration(
+                                          seconds: 1, microseconds: 30),
                                       content: Text(
                                           'Producto añadido al carrito correctamente'),
                                     ),
@@ -220,8 +221,6 @@ class ProductScreen extends StatelessWidget {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              Navigator.of(context).pop();
-
                                               final usuarioId =
                                                   Provider.of<ModeloUsuario>(
                                                           context,
@@ -243,6 +242,32 @@ class ProductScreen extends StatelessWidget {
                                                   nombre,
                                                   precio);
 
+                                              //----Envio de email de confirmación del pedido ---//
+                                              String correoUsuario = await dao
+                                                  .mostrarCorreo(usuarioId);
+                                              String nombreUsuario = await dao
+                                                  .mostrarNombreUsuario(
+                                                      usuarioId);
+                                              String mensajeCorreo =
+                                                  "✅ $nombre";
+
+                                              await _databaseHelper.sendEmail(
+                                                name: nombreUsuario,
+                                                email: correoUsuario,
+                                                subject: 'Confirmación de pedido: Virtual Vault',
+                                                message: 'Hola $nombreUsuario, \n ----------------------------------------------------------------------\n¡Gracias por realizar tu pedido en nuestra aplicación ! $mensajeCorreo \n ---------------------------------------------------------------------- \n 💶 Total del pedido: $precio€ \n ---------------------------------------------------------------------- \nSaludos,\nEquipo de Soporte',
+                                              );
+
+                                              await _databaseHelper.sendEmail(
+                                                name: nombreUsuario,
+                                                email: "virtual.vault11@gmail.com",
+                                                subject: 'Nuevo pedido realizado por $nombreUsuario',
+                                                message: 'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
+                                              );
+
+                                              //Cerrar la ventana.
+                                              Navigator.of(context).pop();
+
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -250,6 +275,15 @@ class ProductScreen extends StatelessWidget {
                                                         ListadoPedidos()),
                                               );
 
+                                              //Mensaje de wp
+                                              String whatsappMessage =
+                                                  "🚐 Resumen del pedido:";
+                                              whatsappMessage +=
+                                                  "\n✅  ${nombre}\n💶 Total del pedido: ${precio}€";
+                                              /* sendWhatsApp(
+                                                  phoneNumber: "34642054838",
+                                                  message: whatsappMessage);
+ */
                                               // Muestra el mensaje de confirmación de compra
                                               showDialog(
                                                 context: context,

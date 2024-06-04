@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           // Temas de la aplicación, texto, colores etc
           theme: ThemeData(
-            // Texto de la app
+            //Tema claro
 
             // Modo oscuro o claro según el estado
             brightness:

@@ -93,135 +93,146 @@ class _ListadoPedidosState extends State<ListadoPedidos> {
                     final horaFormateada =
                         '${fechaPedido.hour}:${fechaPedido.minute}:${fechaPedido.second}';
 
-                    return Card(
-                      color: modeloUsuario.isDarkMode
-                          ? Colors.grey
-                          : const Color(0xFFF1F1F1), // Fondo más oscuro
-                      margin: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Numero de pedido: ${pedido.id}',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
+                    return Container(
+                      margin: EdgeInsets.all(10),
+                      child: Card(
+                        elevation: 5,
+                        color: modeloUsuario.isDarkMode
+                            ? Colors.grey.shade900
+                            : const Color(0xFFF1F1F1), // Fondo más oscuro
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Numero de pedido: ${pedido.id}',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () async {
-                                    bool? confirmDelete =
-                                        await showDialog<bool>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text('Confirmar eliminación'),
-                                          content: Text(
-                                              '¿Estás seguro de que deseas eliminar este pedido?'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text('Cancelar'),
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(false);
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text('Eliminar'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop(true);
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () async {
+                                      bool? confirmDelete =
+                                          await showDialog<bool>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title:
+                                                Text('Confirmar eliminación'),
+                                            content: Text(
+                                                '¿Estás seguro de que deseas eliminar este pedido?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text('Cancelar'),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(false);
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('Eliminar'),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
 
-                                    if (confirmDelete == true) {
-                                      // Lógica para borrar el pedido
-                                      await dao.borrarPedido(pedido.id);
-                                      // Actualizar la lista después de borrar
-                                      _refreshPedidos();
-                                    }
-                                  },
+                                      if (confirmDelete == true) {
+                                        // Lógica para borrar el pedido
+                                        await dao.borrarPedido(pedido.id);
+                                        // Actualizar la lista después de borrar
+                                        _refreshPedidos();
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Divider(),
+                              SizedBox(height: 8.0),
+                              Text(
+                                'Fecha: $fechaFormateada',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: modeloUsuario.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
-                              ],
-                            ),
-                            Divider(),
-                            SizedBox(height: 8.0),
-                            Text(
-                              'Fecha: $fechaFormateada',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
                               ),
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                              'Hora: $horaFormateada',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
+                              SizedBox(height: 4.0),
+                              Text(
+                                'Hora: $horaFormateada',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: modeloUsuario.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                               ),
-                            ),
-                            Divider(),
-                            SizedBox(height: 8.0),
-                            Text(
-                              'Total: ${pedido.total} €',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
+                              Divider(),
+                              SizedBox(height: 8.0),
+                              Text(
+                                'Total: ${pedido.total} €',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 8.0),
-                            Divider(), // Línea separadora
-                            SizedBox(height: 8.0),
-                            Text(
-                              'Productos:',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
+                              SizedBox(height: 8.0),
+                              Divider(), // Línea separadora
+                              SizedBox(height: 8.0),
+                              Text(
+                                'Productos:',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4.0),
-                            FutureBuilder<List<ProductoPedido>>(
-                              future: dao.obtenerProductosPedido(pedido.id),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                    child: Text('Error: ${snapshot.error}'),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  final productosPedido = snapshot.data!;
-                                  return Column(
-                                    children: productosPedido
-                                        .map(
-                                          (productoPedido) => ListTile(
-                                            title: Text(
-                                              '${productoPedido.cantidad} x ${productoPedido.nombre}',
+                              SizedBox(height: 4.0),
+                              FutureBuilder<List<ProductoPedido>>(
+                                future: dao.obtenerProductosPedido(pedido.id),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    final productosPedido = snapshot.data!;
+                                    return Column(
+                                      children: productosPedido
+                                          .map(
+                                            (productoPedido) => ListTile(
+                                              title: Text(
+                                                '${productoPedido.cantidad} x ${productoPedido.nombre}',
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                        .toList(),
-                                  );
-                                } else {
-                                  return SizedBox.shrink();
-                                }
-                              },
-                            ),
-                          ],
+                                          )
+                                          .toList(),
+                                    );
+                                  } else {
+                                    return SizedBox.shrink();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

@@ -49,12 +49,17 @@ class _HomePageState extends State<HomePage> {
                     //Dependiendo si se ha iniciado sesion se muestra un boton u otro.
                     sesionInciada
                         //Si se inicia sesesion se muestra estre drawer con las opciones
-                        ? Builder(
-                            builder: (context) => InkWell(
-                              child: const Icon(Icons.settings),
-                              onTap: () {
-                                Scaffold.of(context).openEndDrawer();
-                              },
+                        ? Container(
+                            margin: EdgeInsets.only(right: 12),
+                            width: 40,
+                            height: 40,
+                            child: Builder(
+                              builder: (context) => InkWell(
+                                child: const Icon(Icons.settings),
+                                onTap: () {
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                              ),
                             ),
                           )
                         :

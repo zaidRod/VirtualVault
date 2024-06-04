@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:widgets_basicos/screens/carritoScreen.dart';
+import 'package:widgets_basicos/screens/favoritesScreen.dart';
 import 'package:widgets_basicos/screens/pedidosScreen.dart';
 import 'package:widgets_basicos/screens/adminScreen.dart';
 import 'package:widgets_basicos/view_models/modelo_usuario.dart';
@@ -43,13 +45,27 @@ class settingScreen extends StatelessWidget {
           );
         },
       ),
-      const ListTile(
+      ListTile(
         leading: Icon(Icons.favorite),
         title: Text('Favoritos'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ListadoFavoritos()),
+          );
+        },
       ),
-      const ListTile(
+      ListTile(
         leading: Icon(Icons.shopping_cart),
         title: Text('Carrito'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CarritoPage(),
+            ),
+          );
+        },
       ),
       ListTile(
         leading: Icon(Icons.dark_mode),
@@ -66,6 +82,7 @@ class settingScreen extends StatelessWidget {
         title: const Text("Cerrar sesión"),
         onTap: () {
           modeloUsuario.cerrarSesion();
+          modeloUsuario.activarModoClaro();
           Navigator.of(context).pop();
         },
       ),

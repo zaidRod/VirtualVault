@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
+import 'package:widgets_basicos/screens/home_pageScreen.dart';
 import 'package:widgets_basicos/view_models/modelo_usuario.dart';
 import 'package:widgets_basicos/widgets/favortite.dart';
 
@@ -11,6 +12,12 @@ class ListadoFavoritos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 10),
+            child: Icon(Icons.favorite),
+          )
+        ],
         title: const Text(
           'Favoritos',
           style: TextStyle(
@@ -53,8 +60,15 @@ class ListadoFavoritos extends StatelessWidget {
                     style: TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 20),
+                  //Si no hay productos en favoritos envia al home page
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
+                      );
+                    },
                     child: const Text('Agregar Productos'),
                   ),
                 ],

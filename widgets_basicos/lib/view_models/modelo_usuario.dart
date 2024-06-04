@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:widgets_basicos/models/Favoritos.dart';
 import 'package:widgets_basicos/models/carga_Datos.dart';
 import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
@@ -131,7 +132,6 @@ class ModeloUsuario extends ChangeNotifier {
         birthDate: birthDate,
       );
       await _databaseHelper.insertUsuario(usuario);
-
       // Enviar correo de confirmación
       await _databaseHelper.sendEmail(
         name: username,
@@ -186,5 +186,23 @@ class ModeloUsuario extends ChangeNotifier {
   void toggleDarkMode() {
     _isDarkMode = !_isDarkMode;
     notifyListeners();
+  }
+
+  // Método para cambiar entre modo oscuro y claro
+  void activarModoClaro() {
+    _isDarkMode = false;
+    notifyListeners();
+  }
+}
+
+//Metodo que evia el mensaje de WP
+void sendWhatsApp(
+    {required String phoneNumber, required String message}) async {
+  String url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$message";
+
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print("Problema al abrir WhatsApp");
   }
 }

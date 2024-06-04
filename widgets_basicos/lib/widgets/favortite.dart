@@ -22,10 +22,13 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
       builder: (context, modeloUsuario, child) {
         return Center(
           child: Container(
+            decoration: BoxDecoration(
+                color: modeloUsuario.isDarkMode
+                    ? Colors.grey.shade800
+                    : const Color(0xFFF1F1F1),
+                borderRadius: BorderRadius.circular(20)),
             //decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-            color: modeloUsuario.isDarkMode
-                ? Colors.grey
-                : const Color(0xFFF1F1F1),
+
             child: Stack(
               children: [
                 Positioned(
