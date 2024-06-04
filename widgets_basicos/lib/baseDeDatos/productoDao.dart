@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
-import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
-import 'package:widgets_basicos/models/pedido.dart';
-import 'package:widgets_basicos/models/producto_pedido.dart';
+import 'package:widgets_basicos/baseDeDatos/databaseHelper.dart';
+import 'package:widgets_basicos/baseDeDatos/productoModel.dart';
+import 'package:widgets_basicos/models/pedidosModel.dart';
+import 'package:widgets_basicos/models/productosPedidoModel.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
 
 class ProductoDao {
@@ -15,7 +15,7 @@ class ProductoDao {
     return data.map((e) => ProductoModel.fromMap(e)).toList();
   }
 
-  Future<int> insert(ProductoModel producto, int userId) async {
+  Future<int> insertCarrito(ProductoModel producto, int userId) async {
     return await database.insert('carrito', {
       'userId': userId,
       'name': producto.name,
@@ -40,12 +40,12 @@ class ProductoDao {
     );
   }
 
-  Future<void> update(ProductoModel producto, int userId) async {
+  Future<void> updateCarrito(ProductoModel producto, int userId) async {
     await database.update('carrito', producto.toMap(),
         where: 'id = ? AND userId = ?', whereArgs: [producto.id, userId]);
   }
 
-  Future<void> delete(ProductoModel producto, int userId) async {
+  Future<void> deleteCarrito(ProductoModel producto, int userId) async {
     await database.delete('carrito',
         where: 'id = ? AND userId = ?', whereArgs: [producto.id, userId]);
   }

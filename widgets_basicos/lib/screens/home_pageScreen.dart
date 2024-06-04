@@ -6,9 +6,9 @@ import 'package:widgets_basicos/screens/carritoScreen.dart';
 import 'package:widgets_basicos/screens/favoritesScreen.dart';
 import 'package:widgets_basicos/screens/homeScreenGrid.dart';
 import 'package:widgets_basicos/screens/settingsScreen.dart';
-import 'package:widgets_basicos/screens/temporal_loginScreen.dart';
+import 'package:widgets_basicos/screens/loginScreen.dart';
 
-import '../view_models/modelo_usuario.dart';
+import '../view_models/modeloUsuario.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

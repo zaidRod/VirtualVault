@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:widgets_basicos/models/carga_Datos.dart';
+import 'package:widgets_basicos/models/cargarDatos.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
-import 'package:widgets_basicos/screens/ProductScreen.dart';
+import 'package:widgets_basicos/screens/productsScreen.dart';
 import 'package:widgets_basicos/widgets/products.dart';
 
 class SearchProductDelegate extends SearchDelegate<Product> {

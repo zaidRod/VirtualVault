@@ -1,11 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/models/carga_Datos.dart';
-import 'package:widgets_basicos/widgets/barraDeBusqueda.dart';
-import 'package:widgets_basicos/widgets/carrousel.dart';
+import 'package:widgets_basicos/models/cargarDatos.dart';
+import 'package:widgets_basicos/widgets/searchBar.dart';
+import 'package:widgets_basicos/widgets/carrusel.dart';
 
-import '../view_models/modelo_usuario.dart';
+import '../view_models/modeloUsuario.dart';
 
 class HomeScreenGrid extends StatefulWidget {
   //Variable que determina si se muestran los botones de modificacion y borrado producto.

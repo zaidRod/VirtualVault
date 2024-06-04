@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:widgets_basicos/models/Favoritos.dart';
-import 'package:widgets_basicos/models/carga_Datos.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
-import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
+import 'package:widgets_basicos/models/favoritesModel.dart';
+import 'package:widgets_basicos/models/cargarDatos.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
+import 'package:widgets_basicos/baseDeDatos/databaseHelper.dart';
 import 'package:widgets_basicos/baseDeDatos/usuarioModel.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
+import 'package:widgets_basicos/baseDeDatos/productoModel.dart';
 
 class ModeloUsuario extends ChangeNotifier {
   // Listado de favoritos y carrito
   List<Favorito> favorites = <Favorito>[];
-  List<ProductoModel> carrito = <ProductoModel>[]; // Cambio aquí
+  List<ProductoModel> carrito = <ProductoModel>[]; 
   final ProductoDao _productoDao = ProductoDao();
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
@@ -96,6 +96,34 @@ class ModeloUsuario extends ChangeNotifier {
     return -1;
   }
 
+  // Método para verificar si el producto ya está en el carrito
+  int existCarrito(String nombreArticulo) {
+    for (int i = 0; i < carrito.length; i++) {
+      if (carrito[i].name == nombreArticulo) {
+        // Devuelve la posición
+        return i;
+      }
+    }
+    // Si no encuentra el artículo devuelve -1
+    return -1;
+  }
+
+  // Método para añadir un elemento del carrito
+  void addCarrito(ProductoModel producto) async {
+    if (_usuarioActual != null && existCarrito(producto.name) == -1) {
+      await dao.insertCarrito(producto, usuarioActual!.id);
+      carrito.add(producto);
+      notifyListeners();
+    }
+  }
+
+  void deleteCarrito(int carritoIndex) async {
+    if (_usuarioActual != null) {
+      carrito.removeAt(carritoIndex);
+      notifyListeners();
+    }
+  }
+
   String _nombre = "";
 
   bool _esAdmin = false;
@@ -172,30 +200,19 @@ class ModeloUsuario extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Métodos para el carrito
-  Future<void> addToCarrito(String name, int cantidad, int price) async {
-    if (_usuarioActual != null) {
-      await _productoDao.insert(
-          ProductoModel(name: name, cantidad: cantidad, price: price),
-          _usuarioActual!.id);
-      await _loadCarrito();
-    }
-  }
-
-  // Método para cambiar entre modo oscuro y claro
-  void toggleDarkMode() {
+  // Métodos para cambiar entre modo oscuro y claro
+  void activarModoOscuro() {
     _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
 
-  // Método para cambiar entre modo oscuro y claro
   void activarModoClaro() {
     _isDarkMode = false;
     notifyListeners();
   }
 }
 
-//Metodo que evia el mensaje de WP
+// Metodo que envía el mensaje de WP
 void sendWhatsApp(
     {required String phoneNumber, required String message}) async {
   String url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$message";

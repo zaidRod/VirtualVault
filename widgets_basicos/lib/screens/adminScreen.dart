@@ -4,7 +4,7 @@ import "package:provider/provider.dart";
 import "package:widgets_basicos/forms/addForm.dart";
 import "package:widgets_basicos/screens/homeScreenGrid.dart";
 import "package:widgets_basicos/screens/settingsScreen.dart";
-import "package:widgets_basicos/view_models/modelo_usuario.dart";
+import "package:widgets_basicos/view_models/modeloUsuario.dart";
 
 //Scaffold del administrador
 class AdminScaffold extends StatefulWidget {

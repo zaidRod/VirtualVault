@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
-import 'package:widgets_basicos/models/pedido.dart';
-import 'package:widgets_basicos/models/producto_pedido.dart';
-import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
+import 'package:widgets_basicos/models/pedidosModel.dart';
+import 'package:widgets_basicos/models/productosPedidoModel.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class ListadoPedidos extends StatefulWidget {
   ListadoPedidos({Key? key}) : super(key: key);

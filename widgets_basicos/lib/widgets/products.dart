@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
 import 'package:widgets_basicos/forms/updateForm.dart';
-import 'package:widgets_basicos/models/Favoritos.dart';
+import 'package:widgets_basicos/models/favoritesModel.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
-import 'package:widgets_basicos/screens/productScreen.dart';
+import 'package:widgets_basicos/screens/productsScreen.dart';
 
-import '../view_models/modelo_usuario.dart';
+import '../view_models/modeloUsuario.dart';
 
 class ProductWidget extends StatefulWidget {
   final Product producto;

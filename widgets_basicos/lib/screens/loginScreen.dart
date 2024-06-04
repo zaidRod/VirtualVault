@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/screens/registro.dart';
-import '../view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/screens/registerScreen.dart';
+import '../view_models/modeloUsuario.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

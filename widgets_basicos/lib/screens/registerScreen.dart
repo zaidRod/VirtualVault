@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

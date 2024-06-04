@@ -3,9 +3,9 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:provider/provider.dart";
-import "package:widgets_basicos/models/Favoritos.dart";
-import "package:widgets_basicos/screens/ProductScreen.dart";
-import "package:widgets_basicos/view_models/modelo_usuario.dart";
+import "package:widgets_basicos/models/favoritesModel.dart";
+import "package:widgets_basicos/screens/productsScreen.dart";
+import "package:widgets_basicos/view_models/modeloUsuario.dart";
 
 class FavoriteWidget extends StatefulWidget {
   final Favorito myFavorite;

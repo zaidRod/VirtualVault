@@ -4,7 +4,7 @@ import 'package:widgets_basicos/screens/carritoScreen.dart';
 import 'package:widgets_basicos/screens/favoritesScreen.dart';
 import 'package:widgets_basicos/screens/pedidosScreen.dart';
 import 'package:widgets_basicos/screens/adminScreen.dart';
-import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class settingScreen extends StatelessWidget {
   const settingScreen({Key? key}) : super(key: key);
@@ -71,7 +71,7 @@ class settingScreen extends StatelessWidget {
         leading: Icon(Icons.dark_mode),
         title: Text(modeloUsuario.isDarkMode ? 'Modo Claro' : 'Modo Oscuro'),
         onTap: () {
-          modeloUsuario.toggleDarkMode();
+          modeloUsuario.activarModoOscuro();
         },
       ),
       const SizedBox(

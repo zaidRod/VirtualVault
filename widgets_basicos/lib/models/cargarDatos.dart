@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
 import 'package:widgets_basicos/widgets/products.dart';
 

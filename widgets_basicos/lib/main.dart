@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/screens/home_pageScreen.dart';
-import 'package:widgets_basicos/models/carga_Datos.dart';
-import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
-import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/models/cargarDatos.dart';
+import 'package:widgets_basicos/baseDeDatos/databaseHelper.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 void main() async {
   // Asegura la inicialización de widgets

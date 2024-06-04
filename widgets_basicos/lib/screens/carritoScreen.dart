@@ -1,14 +1,10 @@
-// ignore: file_names
-// ignore: file_names
-// ignore_for_file: empty_statements
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:widgets_basicos/baseDeDatos/database_helper.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_dao.dart';
-import 'package:widgets_basicos/baseDeDatos/producto_model.dart';
+import 'package:widgets_basicos/baseDeDatos/databaseHelper.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
+import 'package:widgets_basicos/baseDeDatos/productoModel.dart';
 import 'package:widgets_basicos/screens/pedidosScreen.dart';
-import 'package:widgets_basicos/view_models/modelo_usuario.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class CarritoPage extends StatefulWidget {
   const CarritoPage({super.key});
@@ -46,6 +42,12 @@ class _CarritoPageState extends State<CarritoPage> {
       total += producto.price * producto.cantidad;
     }
     return total;
+  }
+
+  void borrarLista(ProductoModel producto) {
+    setState(() {
+      productos.removeWhere((element) => element.id == producto.id);
+    });
   }
 
   void mostrarMensajeCompra(BuildContext context, int total) {
@@ -178,7 +180,8 @@ class _CarritoPageState extends State<CarritoPage> {
                   name: nombreUsuario,
                   email: "virtual.vault11@gmail.com",
                   subject: 'Nuevo pedido realizado por $nombreUsuario',
-                  message: 'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
+                  message:
+                      'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
                 );
 
                 //-----Creación del string para whatsapp ---//
@@ -340,7 +343,7 @@ class _CarritoPageState extends State<CarritoPage> {
                               onPressed: () async {
                                 if (producto.cantidad > 1) {
                                   producto.cantidad--;
-                                  await dao.update(
+                                  await dao.updateCarrito(
                                       producto,
                                       Provider.of<ModeloUsuario>(context,
                                               listen: false)
@@ -360,7 +363,7 @@ class _CarritoPageState extends State<CarritoPage> {
                               onPressed: () async {
                                 if (producto.cantidad < 99) {
                                   producto.cantidad++;
-                                  await dao.update(
+                                  await dao.updateCarrito(
                                       producto,
                                       Provider.of<ModeloUsuario>(context,
                                               listen: false)
@@ -376,16 +379,13 @@ class _CarritoPageState extends State<CarritoPage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            await dao.delete(
+                            await dao.deleteCarrito(
                                 producto,
                                 Provider.of<ModeloUsuario>(context,
                                         listen: false)
                                     .usuarioActual!
                                     .id);
-                            setState(() {
-                              productos.removeWhere(
-                                  (element) => element.id == producto.id);
-                            });
+                            borrarLista(producto);
                           },
                           icon: const Icon(Icons.delete),
                           color: Colors.red,

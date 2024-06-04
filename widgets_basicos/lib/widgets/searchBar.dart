@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
-import "package:widgets_basicos/models/carga_Datos.dart";
-import "package:widgets_basicos/view_models/modelo_usuario.dart";
+import "package:widgets_basicos/models/cargarDatos.dart";
+import "package:widgets_basicos/view_models/modeloUsuario.dart";
 import "package:widgets_basicos/widgets/searchProductDelegate.dart";
 
 class MySearchBar extends StatelessWidget {

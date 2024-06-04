@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:widgets_basicos/models/pedido.dart';
-import 'package:widgets_basicos/models/producto_pedido.dart';
+import 'package:widgets_basicos/models/pedidosModel.dart';
+import 'package:widgets_basicos/models/productosPedidoModel.dart';
 import 'usuarioModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -109,14 +109,7 @@ class DatabaseHelper {
     return maps.isNotEmpty;
   }
 
-  // Métodos para gestionar el carrito
-  Future<int> insertCarrito(
-      int userId, String name, int cantidad, int price) async {
-    final db = await instance.db;
-    return await db.insert('carrito',
-        {'userId': userId, 'name': name, 'cantidad': cantidad, 'price': price});
-  }
-
+  // Método para gestionar el carrito
   Future<List<Map<String, dynamic>>> getCarrito(int userId) async {
     final db = await instance.db;
     return await db.query('carrito', where: 'userId = ?', whereArgs: [userId]);
@@ -201,7 +194,7 @@ class DatabaseHelper {
           'to_name': name,
           'to_email': email,
           'user_email':
-              'virtual.vault11@gmail.com', // Correo de ADMIN por configurar
+              'virtual.vault11@gmail.com', 
           'user_subject': subject,
           'user_message': message,
           'user_name': 'Virtual Vault',
