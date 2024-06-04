@@ -131,6 +131,16 @@ class ModeloUsuario extends ChangeNotifier {
         birthDate: birthDate,
       );
       await _databaseHelper.insertUsuario(usuario);
+
+      // Enviar correo de confirmación
+      await _databaseHelper.sendEmail(
+        name: username,
+        email: email,
+        subject: 'Confirmación de registro',
+        message:
+            'Hola $username, \n\n¡Gracias por registrarte en nuestra aplicación! Tu registro fue exitoso.\n\nSaludos,\nEquipo de Soporte',
+      );
+
       return true;
     }
   }

@@ -44,6 +44,9 @@ dependencies:
   sqflite: ^2.3.2
   shared_preferences: ^2.2.3
 
+  # Enviar email
+  http: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
