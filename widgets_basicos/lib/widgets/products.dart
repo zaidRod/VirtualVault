@@ -95,64 +95,66 @@ class _ProductWidgetState extends State<ProductWidget> {
                   top: 30,
                   right: 0,
                   left: 0,
-                  child: Column(
-                    children: [
-                      //Verificara si se le a dado tap a la imagen
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ProductScreen(
-                                  widget.producto.image,
-                                  widget.producto.name,
-                                  widget.producto.price,
-                                  widget.producto.desc),
-                            ),
-                          );
-                        },
-                        child: Image.file(
-                          File(widget.producto.image),
-                          fit: BoxFit.fill,
-                          height: 160,
-                          width: 120,
+                  child: Center(
+                    child: Column(
+                      children: [
+                        //Verificara si se le a dado tap a la imagen
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ProductScreen(
+                                    widget.producto.image,
+                                    widget.producto.name,
+                                    widget.producto.price,
+                                    widget.producto.desc),
+                              ),
+                            );
+                          },
+                          child: Image.file(
+                            File(widget.producto.image),
+                            fit: BoxFit.fill,
+                            height: 160,
+                            width: 120,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        textAlign: TextAlign.center,
-                        widget.producto.name,
-                        style: GoogleFonts.montserrat(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "${widget.producto.price.toStringAsFixed(2)} €",
-                        style: GoogleFonts.montserrat(fontSize: 18),
-                      ),
-                      //Fila de los botones de edicion y borrado
-                      Visibility(
-                        visible: esAdmin,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              //Boton de edicion
-                              onPressed: () {
-                                updateArticulo(context);
-                              },
-                              child: Icon(Icons.border_color_outlined),
-                            ),
-                            ElevatedButton(
-                              //Boton de borrado
-                              onPressed: () async {
-                                await dao.deleteProduct(widget.producto.id);
-                                ModeloUsuario.actualizarGrid();
-                              },
-                              child: Icon(Icons.delete_outline),
-                            )
-                          ],
+                        SizedBox(height: 5),
+                        Text(
+                          textAlign: TextAlign.center,
+                          widget.producto.name,
+                          style: GoogleFonts.montserrat(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                      )
-                    ],
+                        Text(
+                          "${widget.producto.price.toStringAsFixed(2)} €",
+                          style: GoogleFonts.montserrat(fontSize: 18),
+                        ),
+                        //Fila de los botones de edicion y borrado
+                        Visibility(
+                          visible: esAdmin,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                //Boton de edicion
+                                onPressed: () {
+                                  updateArticulo(context);
+                                },
+                                child: Icon(Icons.border_color_outlined),
+                              ),
+                              ElevatedButton(
+                                //Boton de borrado
+                                onPressed: () async {
+                                  await dao.deleteProduct(widget.producto.id);
+                                  ModeloUsuario.actualizarGrid();
+                                },
+                                child: Icon(Icons.delete_outline),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],

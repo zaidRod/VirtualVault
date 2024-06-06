@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/models/favoritesModel.dart';
-import 'package:widgets_basicos/screens/home_pageScreen.dart';
+import 'package:widgets_basicos/screens/homePageScreen.dart';
 import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 import 'package:widgets_basicos/widgets/favorite.dart';
 
@@ -85,7 +85,7 @@ class ListadoFavoritos extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 13,
                 crossAxisSpacing: 13,
-                mainAxisExtent: 310,
+                mainAxisExtent: 330,
               ),
               itemBuilder: (context, index) {
                 return Card(

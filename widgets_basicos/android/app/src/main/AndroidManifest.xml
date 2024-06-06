@@ -17,7 +17,7 @@
   </intent>
 </queries>
     <application
-        android:label="widgets_basicos"
+        android:label="Virtual Vault"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

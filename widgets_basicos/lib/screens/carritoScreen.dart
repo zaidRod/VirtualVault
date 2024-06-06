@@ -20,6 +20,7 @@ class _CarritoPageState extends State<CarritoPage> {
   int totalInsert = 1;
   String nombreUsuario = "";
   String correoUsuario = "";
+  bool estaCargado = true;
 
   @override
   void initState() {
@@ -44,12 +45,6 @@ class _CarritoPageState extends State<CarritoPage> {
     return total;
   }
 
-  void borrarLista(ProductoModel producto) {
-    setState(() {
-      productos.removeWhere((element) => element.id == producto.id);
-    });
-  }
-
   void mostrarMensajeCompra(BuildContext context, int total) {
     showDialog(
       context: context,
@@ -58,15 +53,15 @@ class _CarritoPageState extends State<CarritoPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: Row(
+          title: const Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.help_outline, // Icono de duda
                 color: Colors.orange,
                 size: 28.0,
               ),
-              const SizedBox(width: 10),
-              const Text('Confirmación'),
+              SizedBox(width: 10),
+              Text('Confirmación'),
             ],
           ),
           content: SizedBox(
@@ -142,104 +137,116 @@ class _CarritoPageState extends State<CarritoPage> {
             ),
             TextButton(
               onPressed: () async {
-                final usuarioId =
-                    Provider.of<ModeloUsuario>(context, listen: false)
-                        .usuarioActual!
-                        .id;
-                // Insertar el nuevo pedido en la tabla Pedidos
-                final pedidoId = await dao.insertarPedido(
-                    usuarioId, DateTime.now(), totalInsert);
-
-                // Insertar los detalles del pedido en la tabla DetallesPedido
-                for (final producto in productos) {
-                  await dao.insertarDetallePedido(pedidoId, producto.id,
-                      producto.cantidad, producto.name, producto.price);
-                }
-
-                //----Envio de email de confirmación del pedido ---//
-
-                correoUsuario = await dao.mostrarCorreo(usuarioId);
-                nombreUsuario = await dao.mostrarNombreUsuario(usuarioId);
-
-                String mensajeCorreo = " ";
-                productos.forEach(
-                  (element) {
-                    mensajeCorreo =
-                        "$mensajeCorreo\n✅  ${element.name}\n\t\t\tCantidad: ${element.cantidad}";
-                  },
-                );
-                await _databaseHelper.sendEmail(
-                  name: nombreUsuario,
-                  email: correoUsuario,
-                  subject: 'Confirmación de pedido: Virtual Vault',
-                  message:
-                      'Hola $nombreUsuario, \n ----------------------------------------------------------------------\n¡Gracias por realizar tu pedido en nuestra aplicación ! $mensajeCorreo \n ---------------------------------------------------------------------- \n 💶 Total del pedido: ${calcularTotal()}€  \n ---------------------------------------------------------------------- \nSaludos,\nEquipo de Soporte',
-                );
-
-                await _databaseHelper.sendEmail(
-                  name: nombreUsuario,
-                  email: "virtual.vault11@gmail.com",
-                  subject: 'Nuevo pedido realizado por $nombreUsuario',
-                  message:
-                      'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
-                );
-
-                //-----Creación del string para whatsapp ---//
-                String whatsappMessage = "🚐 Resumen del pedido:";
-                productos.forEach(
-                  (element) {
-                    whatsappMessage =
-                        "$whatsappMessage\n✅  ${element.name}\n\t\t\tCantidad: ${element.cantidad}";
-                  },
-                );
-                whatsappMessage =
-                    "$whatsappMessage\n💶 Total del pedido: ${calcularTotal()}€";
-                // --- Envio del mensaje-------//
-                /*sendWhatsApp(
-                    phoneNumber: "34642054838", message: whatsappMessage);*/
-
-                productos.clear(); // Borra todos los productos del carrito
-                dao.limpiarCarrito(
-                    Provider.of<ModeloUsuario>(context, listen: false)
-                        .usuarioActual!
-                        .id);
-
-                setState(() {}); // Actualiza la UI
-                Navigator.of(context).pop(); // Cierra el diálogo actual
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListadoPedidos()),
-                );
-
-                // Muestra el mensaje de confirmación de compra
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle, // Icono de verificación
-                            color: Colors.green,
-                            size: 28.0,
-                          ),
-                          SizedBox(width: 10),
-                          Text('Pedido Realizado'),
-                        ],
-                      ),
-                      content: Text('El pedido se ha realizado correctamente.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Aceptar'),
+                //Siempre entra a true de que esta cargando, relaiza las acciones y queda en false lo que cierra el bloque
+                if (estaCargado) {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const AlertDialog(
+                        title: Row(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(width: 20),
+                            Text("Realizando pedido")
+                          ],
                         ),
-                      ],
-                    );
-                  },
-                );
+                        content: Text("Por favor espera mientras se procesa"),
+                      );
+                    },
+                  );
+                  final usuarioId =
+                      Provider.of<ModeloUsuario>(context, listen: false)
+                          .usuarioActual!
+                          .id;
+                  // Insertar el nuevo pedido en la tabla Pedidos
+                  final pedidoId = await dao.insertarPedido(
+                      usuarioId, DateTime.now(), totalInsert);
+
+                  // Insertar los detalles del pedido en la tabla DetallesPedido
+                  for (final producto in productos) {
+                    await dao.insertarDetallePedido(pedidoId, producto.id,
+                        producto.cantidad, producto.name, producto.price);
+                  }
+
+                  //----Envio de email de confirmación del pedido ---//
+
+                  correoUsuario = await dao.mostrarCorreo(usuarioId);
+                  nombreUsuario = await dao.mostrarNombreUsuario(usuarioId);
+
+                  String mensajeCorreo = " ";
+                  productos.forEach(
+                    (element) {
+                      mensajeCorreo =
+                          "$mensajeCorreo\n✅  ${element.name}\n\t\t\tCantidad: ${element.cantidad}";
+                    },
+                  );
+                  await _databaseHelper.sendEmail(
+                    name: nombreUsuario,
+                    email: correoUsuario,
+                    subject: 'Confirmación de pedido: Virtual Vault',
+                    message:
+                        'Hola $nombreUsuario, \n ----------------------------------------------------------------------\n¡Gracias por realizar tu pedido en nuestra aplicación ! $mensajeCorreo \n ---------------------------------------------------------------------- \n 💶 Total del pedido: ${calcularTotal()}€  \n ---------------------------------------------------------------------- \nSaludos,\nEquipo de Soporte',
+                  );
+
+                  await _databaseHelper.sendEmail(
+                    name: nombreUsuario,
+                    email: "virtual.vault11@gmail.com",
+                    subject: 'Nuevo pedido realizado por $nombreUsuario',
+                    message:
+                        'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎',
+                  );
+
+                  productos.clear(); // Borra todos los productos del carrito
+                  dao.limpiarCarrito(
+                      Provider.of<ModeloUsuario>(context, listen: false)
+                          .usuarioActual!
+                          .id);
+
+                  setState(() {}); // Actualiza la UI
+                  Navigator.of(context)
+                      .pop(); // Cierra el cuadro del progress bar
+                  Navigator.of(context)
+                      .pop(); // Cierra el diálogo de la confirmacion
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListadoPedidos()),
+                  );
+                  // Muestra el mensaje de confirmación de compra
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle, // Icono de verificación
+                              color: Colors.green,
+                              size: 28.0,
+                            ),
+                            SizedBox(width: 10),
+                            Text('Pedido Realizado'),
+                          ],
+                        ),
+                        content: const Text(
+                            'El pedido se ha realizado correctamente.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  //Cierra el bloqueo de la pantalla
+                  setState(() {
+                    estaCargado = false;
+                  });
+                } else {}
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -343,7 +350,7 @@ class _CarritoPageState extends State<CarritoPage> {
                               onPressed: () async {
                                 if (producto.cantidad > 1) {
                                   producto.cantidad--;
-                                  await dao.updateCarrito(
+                                  await dao.update(
                                       producto,
                                       Provider.of<ModeloUsuario>(context,
                                               listen: false)
@@ -363,7 +370,7 @@ class _CarritoPageState extends State<CarritoPage> {
                               onPressed: () async {
                                 if (producto.cantidad < 99) {
                                   producto.cantidad++;
-                                  await dao.updateCarrito(
+                                  await dao.update(
                                       producto,
                                       Provider.of<ModeloUsuario>(context,
                                               listen: false)
@@ -379,13 +386,16 @@ class _CarritoPageState extends State<CarritoPage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            await dao.deleteCarrito(
+                            await dao.delete(
                                 producto,
                                 Provider.of<ModeloUsuario>(context,
                                         listen: false)
                                     .usuarioActual!
                                     .id);
-                            borrarLista(producto);
+                            setState(() {
+                              productos.removeWhere(
+                                  (element) => element.id == producto.id);
+                            });
                           },
                           icon: const Icon(Icons.delete),
                           color: Colors.red,

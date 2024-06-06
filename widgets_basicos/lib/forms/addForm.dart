@@ -1,12 +1,11 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
 import 'package:widgets_basicos/models/productsModel.dart';
-import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class InputForm extends StatefulWidget {
   const InputForm({super.key});

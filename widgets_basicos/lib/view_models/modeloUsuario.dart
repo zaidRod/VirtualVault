@@ -10,7 +10,7 @@ import 'package:widgets_basicos/baseDeDatos/productoModel.dart';
 class ModeloUsuario extends ChangeNotifier {
   // Listado de favoritos y carrito
   List<Favorito> favorites = <Favorito>[];
-  List<ProductoModel> carrito = <ProductoModel>[]; 
+  List<ProductoModel> carrito = <ProductoModel>[]; // Cambio aquí
   final ProductoDao _productoDao = ProductoDao();
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
@@ -96,34 +96,6 @@ class ModeloUsuario extends ChangeNotifier {
     return -1;
   }
 
-  // Método para verificar si el producto ya está en el carrito
-  int existCarrito(String nombreArticulo) {
-    for (int i = 0; i < carrito.length; i++) {
-      if (carrito[i].name == nombreArticulo) {
-        // Devuelve la posición
-        return i;
-      }
-    }
-    // Si no encuentra el artículo devuelve -1
-    return -1;
-  }
-
-  // Método para añadir un elemento del carrito
-  void addCarrito(ProductoModel producto) async {
-    if (_usuarioActual != null && existCarrito(producto.name) == -1) {
-      await dao.insertCarrito(producto, usuarioActual!.id);
-      carrito.add(producto);
-      notifyListeners();
-    }
-  }
-
-  void deleteCarrito(int carritoIndex) async {
-    if (_usuarioActual != null) {
-      carrito.removeAt(carritoIndex);
-      notifyListeners();
-    }
-  }
-
   String _nombre = "";
 
   bool _esAdmin = false;
@@ -200,22 +172,49 @@ class ModeloUsuario extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Métodos para cambiar entre modo oscuro y claro
-  void activarModoOscuro() {
+  // Métodos para el carrito
+  Future<void> addToCarrito(String name, int cantidad, int price) async {
+    if (_usuarioActual != null) {
+      await _productoDao.insert(
+          ProductoModel(name: name, cantidad: cantidad, price: price),
+          _usuarioActual!.id);
+      await _loadCarrito();
+    }
+  }
+
+  // Método para cambiar entre modo oscuro y claro
+  void toggleDarkMode() {
     _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
 
+  // Método para cambiar entre modo oscuro y claro
   void activarModoClaro() {
     _isDarkMode = false;
     notifyListeners();
   }
 }
 
-// Metodo que envía el mensaje de WP
+//Metodo que evia el mensaje de WP
 void sendWhatsApp(
     {required String phoneNumber, required String message}) async {
   String url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=$message";
+
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print("Problema al abrir WhatsApp");
+  }
+}
+
+void compartirWhatsApp(
+    {required String nombreProducto,
+    required int precio,
+    required String desc}) async {
+  String mensaje =
+      "👋 ¡Hola! Encontré el juego $nombreProducto por $precio€ en la app 📲 Virtual Vault. Dale un vistazo descargándote su app. ¡Saludos! 😏";
+
+  String url = "https://api.whatsapp.com/send/?text=$mensaje";
 
   if (await canLaunch(url)) {
     await launch(url);

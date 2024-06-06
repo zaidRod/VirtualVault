@@ -74,40 +74,53 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
                   top: 45,
                   right: 0,
                   left: 0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //Verificara si se le a dado tap a la imagen
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ProductScreen(
-                                  widget.myFavorite.imagen,
-                                  widget.myFavorite.nombre,
-                                  widget.myFavorite.precio,
-                                  widget.myFavorite.desc),
-                            ),
-                          );
-                        },
-                        child: Image.file(
-                          File(widget.myFavorite.imagen),
-                          fit: BoxFit.fill,
-                          width: 111,
-                          height: 180,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        //Verificara si se le a dado tap a la imagen
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ProductScreen(
+                                    widget.myFavorite.imagen,
+                                    widget.myFavorite.nombre,
+                                    widget.myFavorite.precio,
+                                    widget.myFavorite.desc),
+                              ),
+                            );
+                          },
+                          child: Image.file(
+                            File(widget.myFavorite.imagen),
+                            fit: BoxFit.fill,
+                            width: 111,
+                            height: 180,
+                          ),
                         ),
-                      ),
-                      Text(
-                        textAlign: TextAlign.center,
-                        widget.myFavorite.nombre,
-                        style: GoogleFonts.playfairDisplay(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "${widget.myFavorite.precio.toStringAsFixed(2)} €",
-                        style: GoogleFonts.playfairDisplay(fontSize: 16),
-                      ),
-                    ],
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(
+                                textAlign: TextAlign.center,
+                                widget.myFavorite.nombre,
+                                style: GoogleFonts.playfairDisplay(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "${widget.myFavorite.precio.toStringAsFixed(2)} €",
+                                style:
+                                    GoogleFonts.playfairDisplay(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

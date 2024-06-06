@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/screens/registerScreen.dart';
 import '../view_models/modeloUsuario.dart';
@@ -39,60 +40,90 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buildTextField(
-                    controller: textControlerUsuario,
-                    label: 'Nombre de usuario',
-                    icon: Icons.person,
-                  ),
-                  buildTextField(
-                    controller: textControlerPass,
-                    label: 'Contraseña',
-                    icon: Icons.lock,
-                    isPassword: true,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      bool success = await modeloUsuario.iniciarSesion(
-                        textControlerUsuario.text,
-                        textControlerPass.text,
-                      );
-                      if (success) {
-                        Navigator.pop(context);
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Error'),
-                            content:
-                                const Text('Usuario o contraseña incorrectos'),
-                            actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/images/LogoApp.png"),
+                                fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("Virtual Vault",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              )),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        buildTextField(
+                          controller: textControlerUsuario,
+                          label: 'Nombre de usuario',
+                          icon: Icons.person,
+                        ),
+                        buildTextField(
+                          controller: textControlerPass,
+                          label: 'Contraseña',
+                          icon: Icons.lock,
+                          isPassword: true,
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            bool success = await modeloUsuario.iniciarSesion(
+                              textControlerUsuario.text,
+                              textControlerPass.text,
+                            );
+                            if (success) {
+                              Navigator.pop(context);
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text(
+                                      'Usuario o contraseña incorrectos'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Iniciar sesión'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("¿No tienes una cuenta? "),
                               TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('OK'),
+                                onPressed: () =>
+                                    _navigateToRegisterPage(context),
+                                child: const Text('Registrarse'),
                               ),
                             ],
                           ),
-                        );
-                      }
-                    },
-                    child: const Text('Iniciar sesión'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("¿No tienes una cuenta? "),
-                        TextButton(
-                          onPressed: () => _navigateToRegisterPage(context),
-                          child: const Text('Registrarse'),
                         ),
                       ],
                     ),

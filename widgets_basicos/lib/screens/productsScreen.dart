@@ -1,17 +1,16 @@
-import "dart:io";
-import "dart:math";
+import 'dart:io';
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:widgets_basicos/baseDeDatos/databaseHelper.dart';
+import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
+import 'package:widgets_basicos/baseDeDatos/productoModel.dart';
+import 'package:widgets_basicos/models/favoritesModel.dart';
+import 'package:widgets_basicos/screens/pedidosScreen.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
-import "package:flutter/cupertino.dart";
-import "package:flutter/material.dart";
-import "package:provider/provider.dart";
-import "package:widgets_basicos/baseDeDatos/databaseHelper.dart";
-import "package:widgets_basicos/baseDeDatos/productoDao.dart";
-import "package:widgets_basicos/baseDeDatos/productoModel.dart";
-import "package:widgets_basicos/models/favoritesModel.dart";
-import "package:widgets_basicos/screens/pedidosScreen.dart";
-import "package:widgets_basicos/view_models/modeloUsuario.dart";
-
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends StatefulWidget {
   final String image;
   final String nombre;
   final int precio;
@@ -19,17 +18,23 @@ class ProductScreen extends StatelessWidget {
 
   ProductScreen(this.image, this.nombre, this.precio, this.desc, {super.key});
 
-  // Métodos de insert y de la base de datos
-  final dao = ProductoDao();
+  @override
+  _ProductScreenState createState() => _ProductScreenState();
+}
 
-  // Instancia de la BD
+class _ProductScreenState extends State<ProductScreen> {
+  bool isButtonEnabled = true;
+
+  final ProductoDao dao = ProductoDao();
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+  bool estaCargado = true;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ModeloUsuario>(
       builder: (context, modeloUsuario, child) {
-        final bool esFavorito = modeloUsuario.existFavorite(nombre) != -1;
+        final bool esFavorito =
+            modeloUsuario.existFavorite(widget.nombre) != -1;
 
         return Scaffold(
           body: SafeArea(
@@ -43,66 +48,100 @@ class ProductScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 244, 224, 224),
                       image: DecorationImage(
-                          image: FileImage(File(image)), fit: BoxFit.cover),
+                          image: FileImage(File(widget.image)),
+                          fit: BoxFit.cover),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Botón de volver
-                          InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Botón de volver
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Icon(Icons.arrow_back_ios_new,
+                                      size: 22, color: Colors.black),
+                                ),
                               ),
-                              child: Icon(Icons.arrow_back_ios_new,
-                                  size: 22, color: Colors.black),
-                            ),
-                          ),
+                              Spacer(
+                                flex: 1,
+                              ),
+                              //Boton de compartir
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    compartirWhatsApp(
+                                        nombreProducto: widget.nombre,
+                                        precio: widget.precio,
+                                        desc: widget.desc);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
 
-                          // Botón de favorito
-                          InkWell(
-                            onTap: () {
-                              int indexFav =
-                                  modeloUsuario.existFavorite(nombre);
-                              // Si existe el favorito lo borra
-                              if (indexFav != -1) {
-                                modeloUsuario.deleteFavorite(indexFav);
-                              } else {
-                                // Lo agrega
-                                modeloUsuario.addFavorite(
-                                  Favorito(
-                                      id: 0,
-                                      nombre: nombre,
-                                      imagen: image,
-                                      precio: precio,
-                                      desc: desc),
-                                );
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
+                                    // Botón de compartir
+                                    child: const Icon(
+                                      Icons.share,
+                                      size: 22,
+                                    ),
+                                  ),
+                                ),
                               ),
 
                               // Botón de favorito
-                              child: Icon(
-                                Icons.favorite,
-                                size: 22,
-                                color: esFavorito ? Colors.red : Colors.black,
+                              InkWell(
+                                onTap: () {
+                                  int indexFav = modeloUsuario
+                                      .existFavorite(widget.nombre);
+                                  // Si existe el favorito lo borra
+                                  if (indexFav != -1) {
+                                    modeloUsuario.deleteFavorite(indexFav);
+                                  } else {
+                                    // Lo agrega
+                                    modeloUsuario.addFavorite(
+                                      Favorito(
+                                          id: 0,
+                                          nombre: widget.nombre,
+                                          imagen: widget.image,
+                                          precio: widget.precio,
+                                          desc: widget.desc),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+
+                                  // Botón de favorito
+                                  child: Icon(
+                                    Icons.favorite,
+                                    size: 22,
+                                    color:
+                                        esFavorito ? Colors.red : Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(
@@ -121,7 +160,7 @@ class ProductScreen extends StatelessWidget {
                             children: [
                               // Nombre del producto
                               Text(
-                                nombre,
+                                widget.nombre,
                                 style: const TextStyle(
                                     fontSize: 28, fontWeight: FontWeight.bold),
                               ),
@@ -131,7 +170,7 @@ class ProductScreen extends StatelessWidget {
 
                         // Precio del producto
                         Text(
-                          "${precio.toStringAsFixed(2)} €",
+                          "${widget.precio.toStringAsFixed(2)} €",
                           style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w700,
@@ -142,7 +181,7 @@ class ProductScreen extends StatelessWidget {
                         ),
                         // Descripción larga
                         Text(
-                          desc,
+                          widget.desc,
                           style: TextStyle(
                               fontSize: 16,
                               color: modeloUsuario.isDarkMode
@@ -155,58 +194,55 @@ class ProductScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             InkWell(
-                              onTap: () async {
-                                if (modeloUsuario.inicioSesion) {
-                                  ProductoModel producto = ProductoModel(
-                                    name: nombre,
-                                    price: precio,
-                                    cantidad: 1,
-                                  );
-                                  int indexCarrito =
-                                      modeloUsuario.existCarrito(nombre);
-                                  if (indexCarrito != -1) {
-                                    modeloUsuario.deleteCarrito(indexCarrito);
-                                    //_CarritoPageState.borrarLista(producto);
-                                    await dao.deleteCarrito(
-                                        producto,
-                                        Provider.of<ModeloUsuario>(context,
-                                                listen: false)
-                                            .usuarioActual!
-                                            .id);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        duration: Duration(
-                                            seconds: 1, microseconds: 30),
-                                        content: Text(
-                                            'Producto eliminado del carrito'),
-                                      ),
-                                    );
-                                  } else {
-                                    modeloUsuario.addCarrito(producto);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        duration: Duration(
-                                            seconds: 1, microseconds: 30),
-                                        content: Text(
-                                            'Producto añadido al carrito correctamente'),
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Por favor, inicie sesión para agregar al carrito.'),
-                                    ),
-                                  );
-                                }
-                              },
+                              onTap: isButtonEnabled
+                                  ? () async {
+                                      setState(() {
+                                        isButtonEnabled = false;
+                                      });
+
+                                      if (modeloUsuario.inicioSesion) {
+                                        final name = widget.nombre;
+                                        ProductoModel producto = ProductoModel(
+                                            name: name, price: widget.precio);
+                                        final id = await dao.insert(producto,
+                                            modeloUsuario.usuarioActual!.id);
+                                        producto = producto.copyWith(id: id);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            duration: Duration(
+                                                seconds: 1, microseconds: 30),
+                                            content: Text(
+                                                'Producto añadido al carrito correctamente'),
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Por favor, inicie sesión para agregar al carrito.'),
+                                          ),
+                                        );
+                                      }
+
+                                      // Habilitar el botón después de 10 segundos
+                                      await Future.delayed(
+                                          Duration(seconds: 10));
+                                      if (mounted) {
+                                        setState(() {
+                                          isButtonEnabled = true;
+                                        });
+                                      }
+                                    }
+                                  : null,
                               child: Container(
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF7F8FA),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                                    color: isButtonEnabled
+                                        ? const Color(0xFFF7F8FA)
+                                        : Colors.grey,
+                                    borderRadius: BorderRadius.circular(30)),
                                 child: const Icon(
                                   CupertinoIcons.cart_fill,
                                   size: 22,
@@ -241,105 +277,120 @@ class ProductScreen extends StatelessWidget {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              final usuarioId =
-                                                  Provider.of<ModeloUsuario>(
-                                                          context,
-                                                          listen: false)
-                                                      .usuarioActual!
-                                                      .id;
-                                              // Insertar el nuevo pedido en la tabla Pedidos
-                                              final pedidoId =
-                                                  await dao.insertarPedido(
-                                                      usuarioId,
-                                                      DateTime.now(),
-                                                      precio);
+                                              if (estaCargado) {
+                                                showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const AlertDialog(
+                                                      title: Row(
+                                                        children: [
+                                                          CircularProgressIndicator(),
+                                                          SizedBox(width: 20),
+                                                          Text(
+                                                              "Realizando pedido")
+                                                        ],
+                                                      ),
+                                                      content: Text(
+                                                          "Por favor espera mientras se procesa"),
+                                                    );
+                                                  },
+                                                );
+                                                final usuarioId =
+                                                    Provider.of<ModeloUsuario>(
+                                                            context,
+                                                            listen: false)
+                                                        .usuarioActual!
+                                                        .id;
+                                                // Insertar el nuevo pedido en la tabla Pedidos
+                                                final pedidoId =
+                                                    await dao.insertarPedido(
+                                                        usuarioId,
+                                                        DateTime.now(),
+                                                        widget.precio);
 
-                                              // Insertar los detalles del pedido en la tabla DetallesPedido
-                                              await dao.insertarDetallePedido(
-                                                  pedidoId,
-                                                  Random().nextInt(100) + 1,
-                                                  1,
-                                                  nombre,
-                                                  precio);
+                                                // Insertar los detalles del pedido en la tabla DetallesPedido
+                                                await dao.insertarDetallePedido(
+                                                    pedidoId,
+                                                    Random().nextInt(100) + 1,
+                                                    1,
+                                                    widget.nombre,
+                                                    widget.precio);
 
-                                              //----Envio de email de confirmación del pedido ---//
-                                              String correoUsuario = await dao
-                                                  .mostrarCorreo(usuarioId);
-                                              String nombreUsuario = await dao
-                                                  .mostrarNombreUsuario(
-                                                      usuarioId);
-                                              String mensajeCorreo =
-                                                  "✅ $nombre";
+                                                //----Envio de email de confirmación del pedido ---//
+                                                String correoUsuario = await dao
+                                                    .mostrarCorreo(usuarioId);
+                                                String nombreUsuario = await dao
+                                                    .mostrarNombreUsuario(
+                                                        usuarioId);
+                                                String mensajeCorreo =
+                                                    "✅ ${widget.nombre}";
 
-                                              await _databaseHelper.sendEmail(
+                                                await _databaseHelper.sendEmail(
                                                   name: nombreUsuario,
                                                   email: correoUsuario,
                                                   subject:
                                                       'Confirmación de pedido: Virtual Vault',
                                                   message:
-                                                      'Hola $nombreUsuario, \n ----------------------------------------------------------------------\n¡Gracias por realizar tu pedido en nuestra aplicación ! $mensajeCorreo \n ---------------------------------------------------------------------- \n 💶 Total del pedido: $precio€ \n ---------------------------------------------------------------------- \nSaludos,\nEquipo de Soporte');
+                                                      'Hola $nombreUsuario, \n\n¡Gracias por realizar tu pedido en nuestra aplicación !/n/n $mensajeCorreo \n/n 💶 Total del pedido: ${widget.precio}€  \n\nSaludos,\nEquipo de Soporte',
+                                                );
 
-                                              await _databaseHelper.sendEmail(
-                                                  name: nombreUsuario,
-                                                  email:
-                                                      "virtual.vault11@gmail.com",
-                                                  subject:
-                                                      'Nuevo pedido realizado por $nombreUsuario',
-                                                  message:
-                                                      'Hola Admin, \n ---------------------------------------------------------------------- \n¡ Se ha realizado un pedido a nombre de $nombreUsuario ! $mensajeCorreo \n ---------------------------------------------------------------------- \n Correo del cliente: $correoUsuario \n\n Saludos. 😎');
+                                                Navigator.of(context)
+                                                    .pop(); // Cierra el progres indicator bar
+                                                Navigator.of(context)
+                                                    .pop(); //Cerrar la ventana de confirmacion
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ListadoPedidos()),
+                                                );
 
-                                              //Cerrar la ventana.
-                                              Navigator.of(context).pop();
-
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ListadoPedidos()),
-                                              );
-
-                                              //Mensaje de wp
-                                              String whatsappMessage =
-                                                  "🚐 Resumen del pedido:";
-                                              whatsappMessage +=
-                                                  "\n✅ ${nombre}\n💶 Total del pedido: ${precio}€";
-                                              /* sendWhatsApp(
-                                                  phoneNumber: "34642054838",
-                                                  message: whatsappMessage);
-                                              */
-                                              // Muestra el mensaje de confirmación de compra
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: const Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.check_circle,
-                                                          color: Colors.green,
-                                                          size: 28.0,
-                                                        ),
-                                                        SizedBox(width: 10),
-                                                        Text(
-                                                            'Pedido Realizado'),
-                                                      ],
-                                                    ),
-                                                    content: const Text(
-                                                        'El pedido se ha realizado correctamente.'),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: const Text(
-                                                            'Aceptar'),
+                                                // Muestra el mensaje de confirmación de compra
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.check_circle,
+                                                            color: Colors.green,
+                                                            size: 28.0,
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Text(
+                                                              'Pedido Realizado'),
+                                                        ],
                                                       ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
+                                                      content: const Text(
+                                                          'El pedido se ha realizado correctamente.'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: const Text(
+                                                              'Aceptar'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                //Cierra el bloqueo de la pantalla
+                                                setState(
+                                                  () {
+                                                    estaCargado = false;
+                                                  },
+                                                );
+                                                //Vuelve a colocar el alert de carga para la proxima compra
+                                                estaCargado = true;
+                                              }
                                             },
                                             child: const Text('Confirmar'),
                                           ),

@@ -7,8 +7,7 @@ import 'package:widgets_basicos/screens/favoritesScreen.dart';
 import 'package:widgets_basicos/screens/homeScreenGrid.dart';
 import 'package:widgets_basicos/screens/settingsScreen.dart';
 import 'package:widgets_basicos/screens/loginScreen.dart';
-
-import '../view_models/modeloUsuario.dart';
+import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -82,11 +81,28 @@ class _HomePageState extends State<HomePage> {
                           )
                   ],
                   backgroundColor: Colors.black,
-                  title: Text(
-                    //nombre del usuario a modificar
-                    saludo + (modeloUsuario.usuarioActual?.username ?? ''),
-                    style: GoogleFonts.playfairDisplay(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                  title: Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/images/LogoApp.png"),
+                              fit: BoxFit.cover),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        //nombre del usuario a modificar
+                        saludo + (modeloUsuario.usuarioActual?.username ?? ''),
+                        style: GoogleFonts.playfairDisplay(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                   foregroundColor: Colors.white,
                 ),

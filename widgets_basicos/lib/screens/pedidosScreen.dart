@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widgets_basicos/baseDeDatos/productoDao.dart';
 import 'package:widgets_basicos/models/pedidosModel.dart';
-import 'package:widgets_basicos/models/productosPedidoModel.dart';
+import 'package:widgets_basicos/models/productoPedidoModel.dart';
 import 'package:widgets_basicos/view_models/modeloUsuario.dart';
 
 class ListadoPedidos extends StatefulWidget {
