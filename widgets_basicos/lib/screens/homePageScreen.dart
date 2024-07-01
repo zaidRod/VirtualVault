@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                     sesionInciada
                         //Si se inicia sesesion se muestra estre drawer con las opciones
                         ? Container(
-                            margin: EdgeInsets.only(right: 12),
+                            margin: EdgeInsets.only(right: 10),
                             width: 40,
                             height: 40,
                             child: Builder(
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(
-                        width: 10,
+                        width: 5,
                       ),
                       Text(
                         //nombre del usuario a modificar
